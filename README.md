@@ -1,4 +1,4 @@
-# Live To Eat
+# Live To Eat ![travis ci status](https://travis-ci.com/mohammadmoustafa/live2eat.svg?token=x5UYs3mHHupcaokhMASd&branch=master)
 
 > A app for storing your favourite recipes and conveniently changing portion sizes on the fly.
 

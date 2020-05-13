@@ -8,13 +8,18 @@ const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
 const config = require('./config');
 const menu = require('./menu');
+const isDev = require('electron-is-dev');
+const logger = require('electron-timber');
+const serve = require('electron-serve');
+
+const loadURL = serve({directory: '.'});
 
 unhandled();
-debug();
+// debug();
 contextMenu();
 
 // Note: Must match `build.appId` in package.json
-app.setAppUserModelId('com.company.AppName');
+app.setAppUserModelId('com.mohammadmoustafa.live2eat');
 
 // Uncomment this before publishing your first version.
 // It's commented out as it throws an error if there are no published versions.
@@ -48,7 +53,20 @@ const createMainWindow = async () => {
 		mainWindow = undefined;
 	});
 
-	await win.loadFile(path.join(__dirname, 'index.html'));
+	if (isDev) {
+		const elemon = require('elemon');
+		elemon({
+			app: app,
+			mainFile: 'index.js',
+			bws: [
+				{ bw: win, res: ['index.html', 'index.js', 'index.css'] }
+			]
+		});
+		logger.log('elemon live reloading set.');
+	}
+
+	// await win.loadFile(path.join(__dirname, 'index.html'));
+	await loadURL(win);
 
 	return win;
 };
