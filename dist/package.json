@@ -14,8 +14,7 @@
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder --macos --linux --windows",
-		"release": "np",
-		"build": "gulp build"
+		"release": "np"
 	},
 	"dependencies": {
 		"babel-cli": "^6.26.0",
@@ -43,38 +42,6 @@
 	"np": {
 		"publish": false,
 		"releaseDraft": false
-	},
-	"build": {
-		"appId": "com.mohammadmoustafa.live2eat",
-		"directories": {
-			"app": "dist"
-		},
-		"mac": {
-			"category": "public.cooking",
-			"darkModeSupport": true
-		},
-		"dmg": {
-			"iconSize": 160,
-			"contents": [
-				{
-					"x": 180,
-					"y": 170
-				},
-				{
-					"x": 480,
-					"y": 170,
-					"type": "link",
-					"path": "/Applications"
-				}
-			]
-		},
-		"linux": {
-			"target": [
-				"AppImage",
-				"deb"
-			],
-			"category": "Cooking"
-		}
 	},
 	"_moduleAliases": {
 		"@components": "./src/components"
