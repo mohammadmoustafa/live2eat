@@ -13,8 +13,8 @@
 	"scripts": {
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
-		"dist": "electron-builder -mwl",
-		"release": "gulp release",
+		"dist": "electron-builder --macos --linux --windows",
+		"release": "npm",
 		"build": "gulp build"
 	},
 	"dependencies": {

@@ -8,16 +8,16 @@ const connect = require('gulp-connect');
 
 // copy main.html as is
 gulp.task('html', () => {
-  return gulp.src('src/html/index.html')
-    .pipe(gulp.dest('dist/src/html', {overwrite: true}))
+  return gulp.src('src/html/index.html', {base: './'})
+    .pipe(gulp.dest('dist', {overwrite: true}))
     .pipe(connect.reload());
 });
 
 // compile CSS files and move them to the app folder
 gulp.task('css', () => {
-  return gulp.src(['src/css/*.css'])
+  return gulp.src(['src/css/*.css'], {base: './'})
     .pipe(css())
-    .pipe(gulp.dest('dist/src/css', {overwrite: true}))
+    .pipe(gulp.dest('dist', {overwrite: true}))
     .pipe(connect.reload());
 });
 
@@ -30,13 +30,13 @@ gulp.task('ts', () => {
 });
 
 gulp.task('images', () => {
-  return gulp.src('src/assets/*')
-    .pipe(gulp.dest('dist/src/assets', {overwrite: true}))
+  return gulp.src('src/assets/*', {base: './'})
+    .pipe(gulp.dest('dist', {overwrite: true}))
     .pipe(connect.reload());
 });
 
 gulp.task('fonts', () => {
-  return gulp.src('src/fonts/*')
+  return gulp.src('src/fonts/*', {base: './'})
     .pipe(gulp.dest('dist/src/fonts', {overwrite: true}));
 });
 
