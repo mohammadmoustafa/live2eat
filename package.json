@@ -15,7 +15,7 @@
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder --macos",
-		"release": "np",
+		"release": "np --no-publish",
 		"build": "gulp build"
 	},
 	"devDependencies": {
