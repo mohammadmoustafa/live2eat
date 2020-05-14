@@ -1,7 +1,7 @@
 {
 	"name": "live2eat",
 	"productName": "Live To Eat",
-	"version": "0.0.1",
+	"version": "0.0.2-0",
 	"description": "recipe storage app",
 	"license": "MIT",
 	"repository": "mohammadmoustafa/live2eat",
