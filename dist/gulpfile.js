@@ -21,7 +21,7 @@ gulp.task('css', function () {
 // compile JS/TS files and move them to app folder
 gulp.task('ts', function () {
     return tsProject.src()
-        .pipe(tsProject())
+        .pipe(tsProject({ base: './' }))
         .js.pipe(gulp.dest('dist', { overwrite: true }))
         .pipe(connect.reload());
 });
@@ -32,7 +32,7 @@ gulp.task('images', function () {
 });
 gulp.task('fonts', function () {
     return gulp.src('src/fonts/*', { base: './' })
-        .pipe(gulp.dest('dist/src/fonts', { overwrite: true }));
+        .pipe(gulp.dest('dist', { overwrite: true }));
 });
 gulp.task('connect', function (callback) {
     connect.server({

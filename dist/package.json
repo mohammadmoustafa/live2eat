@@ -9,7 +9,7 @@
 		"name": "Mohamed Moustafa",
 		"url": "https://mohammadmoustafa.tech"
 	},
-	"main": "dist/main.js",
+	"main": "./main.js",
 	"scripts": {
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
