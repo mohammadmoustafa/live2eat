@@ -11,11 +11,11 @@
 	},
 	"main": "dist/main.js",
 	"scripts": {
-		"postinstall": "electron-builder install-app-deps",
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder --macos --linux --windows",
-		"release": "gulp release"
+		"release": "gulp release",
+		"build": "gulp build"
 	},
 	"dependencies": {
 		"babel-cli": "^6.26.0",

@@ -69,6 +69,6 @@ gulp.task('default', gulp.series('start'));
 
 gulp.task('release', gulp.series('build', () => {
   return exec(
-    __dirname + '/node_modules/.bin/electron-builder --macos --linux --windows .'
+    __dirname + '/node_modules/.bin/electron-builder .'
   ).on('close', () => process.exit());
 }))
