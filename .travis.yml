@@ -1,14 +1,40 @@
-os: osx
 osx_image: xcode10.2
+os:
+  - linux
+  - osx
+
+sudo: required
+
 language: node_js
 node_js: '12'
+
 addons:
+  chrome: stable
   apt:
     packages: 
       - xvfb
+
+before_install:
+  - npm install --global xo
+
 install:
   - export DISPLAY=':99.0'
   - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+env:
+  global:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
+cache:
+  directories:
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+    - $HOME/.npm/_prebuilds
+
+before_cache:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then rm -rf $HOME/.cache/electron-builder/wine; fi
+
 script:
   - npm test
   - npm run dist
