@@ -6,16 +6,16 @@ const {is} = require('electron-util');
 const unhandled = require('electron-unhandled');
 const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
-const config = require('./config');
-const menu = require('./menu');
+const menu = require('./src/js/menu.js');
 const isDev = require('electron-is-dev');
 const logger = require('electron-timber');
-const serve = require('electron-serve');
-
-const loadURL = serve({directory: '.'});
+const url = require('url');
 
 unhandled();
-// debug();
+debug({
+	isEnabled: true,
+	showDevTools: true,
+});
 contextMenu();
 
 // Note: Must match `build.appId` in package.json
@@ -33,14 +33,19 @@ app.setAppUserModelId('com.mohammadmoustafa.live2eat');
 // }
 
 // Prevent window from being garbage collected
-let mainWindow;
+let mainWindow: any;
 
 const createMainWindow = async () => {
 	const win = new BrowserWindow({
 		title: app.name,
 		show: false,
-		width: 600,
-		height: 400
+		width: 800,
+		height: 600,
+		titleBarStyle: 'hiddenInset',
+		frame: false,
+		webPreferences: {
+			nodeIntegration: true
+		}
 	});
 
 	win.on('ready-to-show', () => {
@@ -53,20 +58,13 @@ const createMainWindow = async () => {
 		mainWindow = undefined;
 	});
 
-	if (isDev) {
-		const elemon = require('elemon');
-		elemon({
-			app: app,
-			mainFile: 'index.js',
-			bws: [
-				{ bw: win, res: ['index.html', 'index.js', 'index.css'] }
-			]
-		});
-		logger.log('elemon live reloading set.');
-	}
+	await win.loadURL(url.format({
+		pathname: path.join(__dirname, "src/html/index.html"),
+		protocol: 'file:',
+		slashes: true
+	})
 
-	// await win.loadFile(path.join(__dirname, 'index.html'));
-	await loadURL(win);
+	);
 
 	return win;
 };
@@ -102,7 +100,4 @@ app.on('activate', async () => {
 	await app.whenReady();
 	Menu.setApplicationMenu(menu);
 	mainWindow = await createMainWindow();
-
-	const favoriteAnimal = config.get('favoriteAnimal');
-	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'Your favorite animal is ${favoriteAnimal}'`);
 })();

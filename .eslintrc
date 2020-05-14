@@ -1,0 +1,11 @@
+{
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "import/parser": "babel-eslint",
+    "import/resolver": "eslint-import-resolver-babel-module"
+  }
+}
