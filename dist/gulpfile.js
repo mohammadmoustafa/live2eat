@@ -56,5 +56,5 @@ gulp.task('start', gulp.parallel('connect', 'watch', gulp.series('build', functi
 })));
 gulp.task('default', gulp.series('start'));
 gulp.task('release', gulp.series('build', function () {
-    return exec(__dirname + '/node_modules/.bin/electron-builder .').on('close', function () { return process.exit(); });
+    return exec(__dirname + '/node_modules/.bin/electron-builder -mwl').on('close', function () { return process.exit(); });
 }));
