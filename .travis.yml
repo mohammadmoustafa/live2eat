@@ -35,4 +35,4 @@ before_cache:
 
 script:
   - npm install
-  - npm run dist
+  - npm run release

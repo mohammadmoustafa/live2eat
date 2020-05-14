@@ -83,6 +83,11 @@
 		"directories": {
 			"app": "dist"
 		},
+		"files": [
+			"dist/**/*",
+			"node_modules/**/*",
+			"package.json"
+		],
 		"mac": {
 			"category": "public.cooking",
 			"darkModeSupport": true
