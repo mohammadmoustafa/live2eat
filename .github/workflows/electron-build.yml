@@ -30,10 +30,10 @@ jobs:
     - name: Install dependencies
       run: npm install
     
-    - name: Run Gulp build
+    - name: Gulp build
       run: npm run build
     
-    - name: Release
+    - name: Electron-Builder dist
       run: npm run dist
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
