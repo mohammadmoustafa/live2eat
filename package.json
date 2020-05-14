@@ -14,7 +14,7 @@
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder --macos --linux --windows",
-		"release": "gulp release",
+		"release": "np",
 		"build": "gulp build"
 	},
 	"dependencies": {
@@ -83,11 +83,6 @@
 		"directories": {
 			"app": "dist"
 		},
-		"files": [
-			"dist/**/*",
-			"node_modules/**/*",
-			"package.json"
-		],
 		"mac": {
 			"category": "public.cooking",
 			"darkModeSupport": true
