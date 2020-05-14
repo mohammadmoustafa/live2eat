@@ -34,4 +34,5 @@ before_cache:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then rm -rf $HOME/.cache/electron-builder/wine; fi
 
 script:
+  - npm install
   - npm run dist
