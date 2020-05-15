@@ -1,21 +1,19 @@
 'use strict';
 const path = require('path');
-const {app, BrowserWindow, Menu} = require('electron');
-/// const {autoUpdater} = require('electron-updater');
+const {app, BrowserWindow, Menu, ipcMain} = require('electron');
+// const {autoUpdater} = require('electron-updater');
 const {is} = require('electron-util');
 const unhandled = require('electron-unhandled');
 const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
-const menu = require('./src/js/menu.js');
+const menu = require('./js/menu.js');
 const isDev = require('electron-is-dev');
 const logger = require('electron-timber');
 const url = require('url');
+var Mousetrap = require('mousetrap');
 
 unhandled();
-debug({
-	isEnabled: true,
-	showDevTools: true,
-});
+if (isDev) debug();
 contextMenu();
 
 // Note: Must match `build.appId` in package.json
@@ -59,13 +57,10 @@ const createMainWindow = async () => {
 	});
 
 	await win.loadURL(url.format({
-		pathname: path.join(__dirname, "src/html/index.html"),
-		protocol: 'file:',
-		slashes: true
-	})
-
-	);
-
+		protocol: 'file',
+		slashes: true,
+		pathname: path.join(__dirname, './html/index.html')
+	}));
 	return win;
 };
 
@@ -101,3 +96,4 @@ app.on('activate', async () => {
 	Menu.setApplicationMenu(menu);
 	mainWindow = await createMainWindow();
 })();
+

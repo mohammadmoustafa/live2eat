@@ -9,11 +9,7 @@ export default class Nav extends React.Component {
     return (
       <nav className="nav-group">
         <h5 className="nav-group-title">Navigation</h5>
-        <NavLink to="/dashboard" className="nav-group-item" isActive={(match: any, location: any) => {
-          if (ROUTES.includes(location)) return true;
-          if (match) return true;
-          return false;
-        }}>
+        <NavLink to="/dashboard" className="nav-group-item">
           <span className="icon icon-home"></span>
           Dashboard
         </NavLink>

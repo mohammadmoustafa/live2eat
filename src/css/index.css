@@ -38,8 +38,8 @@ header.body {
 	text-align: center;
 }
 
-header h1.body, h2.body {
-	font-size: 60px;
+header h1.body {
+	font-size: min(max(40px, 4vw), 60px);
 	font-weight: 200;
 	margin: 0;
 	padding: 0;
@@ -47,9 +47,41 @@ header h1.body, h2.body {
 }
 
 header h2.body {
-	font-size: 30px;
+	font-size: min(max(20px, 4vw), 30px);
 	font-weight: 200;
 	margin: 0;
 	padding: 0;
 	opacity: 0.7;
+}
+
+header h3.body {
+	font-size: min(max(15px, 4vw), 25px);
+	font-weight: 200;
+	margin: 0;
+	padding: 0;
+	opacity: 0.7;
+}
+
+img {
+	object-fit: cover;
+}
+
+.btn-transparent {
+	box-shadow: none;
+}
+
+[class*="icon-"] {
+	opacity: 0.7;
+}
+
+.icon-xl {
+	font-size: 60px;
+}
+
+.icon-lg {
+	font-size: 30px;
+}
+
+.icon-md {
+	font-size: 2em;
 }
