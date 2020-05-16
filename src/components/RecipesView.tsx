@@ -28,8 +28,8 @@ export default class RecipesView extends React.Component<any, any> {
       webPreferences: {
         nodeIntegration: true
       },
-      width: top.getBounds().width,
-      height: top.getBounds().height / 2
+      width: top.getBounds().width * 0.75,
+      height: top.getBounds().height * 0.75
     });
     logger.log("Modal navigating to html/modal.html");
     win.loadURL(url.format({

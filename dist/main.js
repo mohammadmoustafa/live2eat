@@ -34,8 +34,8 @@ var url = require('url');
 
 var Mousetrap = require('mousetrap');
 
-unhandled();
-if (isDev) debug();
+unhandled(); // if (isDev) debug();
+
 contextMenu(); // Note: Must match `build.appId` in package.json
 
 app.setAppUserModelId('com.mohammadmoustafa.live2eat'); // Uncomment this before publishing your first version.

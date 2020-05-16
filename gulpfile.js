@@ -24,7 +24,7 @@ gulp.task('css', () => {
 });
 
 gulp.task('js', () => {
-  return gulp.src('src/js/*.js')
+  return gulp.src(['src/js/*.js', 'src/js/*.ts'])
     .pipe(babel())
     .pipe(gulp.dest('dist/js', { base: '.' }))
     .pipe(connect.reload());

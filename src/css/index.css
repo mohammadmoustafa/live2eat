@@ -85,3 +85,59 @@ img {
 .icon-md {
 	font-size: 2em;
 }
+
+.row {
+	display: flex;
+}
+
+.col {
+	flex: 1;
+}
+
+.center {
+	justify-content: center;
+	align-items: center;
+}
+
+.input-group {
+	display: flex;
+	width: 100%;
+	border-spacing: 0;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.input-group + .input-group {
+	margin-left: 10px;
+}
+
+.input-group-append, .input-group-prepend {
+	display: flex;
+	background: #eee;
+	color: #777;
+	padding: 0 8px;
+	justify-content: center;
+	align-items: center;
+}
+
+.input-group-prepend {
+	border-right: 1px solid #ddd;
+}
+
+.input-group-append {
+	border-left: 1px solid #ddd;
+}
+
+.input-group input {
+	border: 0;
+	padding: 8px;
+}
+
+.input-group-area {
+	z-index: 999;
+	flex: 1;
+}
+
+.space-fill {
+	flex: 1 0 auto;
+}

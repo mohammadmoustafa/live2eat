@@ -69,8 +69,8 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
         webPreferences: {
           nodeIntegration: true
         },
-        width: top.getBounds().width,
-        height: top.getBounds().height / 2
+        width: top.getBounds().width * 0.75,
+        height: top.getBounds().height * 0.75
       });
       logger.log("Modal navigating to html/modal.html");
       win.loadURL(url.format({

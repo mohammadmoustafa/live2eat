@@ -13,7 +13,7 @@ const url = require('url');
 var Mousetrap = require('mousetrap');
 
 unhandled();
-if (isDev) debug();
+// if (isDev) debug();
 contextMenu();
 
 // Note: Must match `build.appId` in package.json
