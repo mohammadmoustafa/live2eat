@@ -23,6 +23,10 @@ body {
 	font-feature-settings: 'liga', 'clig', 'kern';
 }
 
+.dark {
+  filter: invert(1);
+}
+
 .sidebar {
 	padding-top: 26px;
 }

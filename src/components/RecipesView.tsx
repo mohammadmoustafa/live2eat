@@ -29,7 +29,7 @@ export default class RecipesView extends React.Component<any, any> {
         nodeIntegration: true
       },
       width: top.getBounds().width * 0.75,
-      height: top.getBounds().height * 0.75
+      height: top.getBounds().height * 0.9
     });
     logger.log("Modal navigating to html/modal.html");
     win.loadURL(url.format({
@@ -50,8 +50,8 @@ export default class RecipesView extends React.Component<any, any> {
     if (this.state.recipes.length === 0) {
       return (
         <React.Fragment>
-          <div className="toolbar-actions" onClick={this.showModal}>
-            <button className="btn btn-transparent pull-right">
+          <div className="toolbar-actions">
+            <button className="btn btn-transparent pull-right" onClick={this.showModal}>
               <IconContext.Provider value={{className: 'icon-md'}}>
                 <MdAdd />
               </IconContext.Provider>

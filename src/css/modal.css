@@ -5,3 +5,34 @@
 .modal-title {
   margin-top: 5px;
 }
+
+.text-section {
+  flex: 1;
+}
+
+.text-section > div {
+  width: 100%;
+}
+
+.text-section > :last-child {
+  margin-left: 10px;
+}
+
+.text-section > .form-group {
+  display: flex;
+  flex-flow: column;
+}
+
+.text-section > .form-group > textarea {
+  flex: 1;
+}
+
+x-taginput, x-taginput:focus {
+  border-radius: 4px;
+}
+
+form {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}

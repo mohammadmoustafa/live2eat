@@ -70,7 +70,7 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
           nodeIntegration: true
         },
         width: top.getBounds().width * 0.75,
-        height: top.getBounds().height * 0.75
+        height: top.getBounds().height * 0.9
       });
       logger.log("Modal navigating to html/modal.html");
       win.loadURL(url.format({
@@ -92,10 +92,10 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
     value: function render() {
       if (this.state.recipes.length === 0) {
         return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("div", {
-          className: "toolbar-actions",
-          onClick: this.showModal
+          className: "toolbar-actions"
         }, /*#__PURE__*/_react["default"].createElement("button", {
-          className: "btn btn-transparent pull-right"
+          className: "btn btn-transparent pull-right",
+          onClick: this.showModal
         }, /*#__PURE__*/_react["default"].createElement(_reactIcons.IconContext.Provider, {
           value: {
             className: 'icon-md'

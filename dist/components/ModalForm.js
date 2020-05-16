@@ -31,8 +31,6 @@ var _md = require("react-icons/md");
 
 var _bs = require("react-icons/bs");
 
-var _io = require("react-icons/io");
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
@@ -50,20 +48,22 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
     (0, _classCallCheck2["default"])(this, ModalForm);
     _this = _super.call(this, props);
     _this.state = {
+      title: '',
+      img: '',
       prepTime: [0, 0, ''],
-      cookTime: [0, 0, '']
+      cookTime: [0, 0, ''],
+      directions: [],
+      ingredients: [],
+      tags: []
     };
+    _this.fileRef = React.createRef();
     _this.exit = _this.exit.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.submit = _this.submit.bind((0, _assertThisInitialized2["default"])(_this));
     _this.parseDuration = _this.parseDuration.bind((0, _assertThisInitialized2["default"])(_this));
     return _this;
   }
 
   (0, _createClass2["default"])(ModalForm, [{
-    key: "exit",
-    value: function exit() {
-      _electron.remote.getCurrentWindow().close();
-    }
-  }, {
     key: "parseDuration",
     value: function parseDuration(duration) {
       if (duration == null || duration === '') return 0;
@@ -76,20 +76,31 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
       return [hours, mins, duration];
     }
   }, {
+    key: "exit",
+    value: function exit() {
+      _electron.remote.getCurrentWindow().close();
+    }
+  }, {
+    key: "submit",
+    value: function submit() {
+      console.log('clear it');
+      this.fileRef.current.value = '';
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
 
       return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-        className: "toolbar-actions",
-        onClick: this.exit
+        className: "toolbar-actions"
       }, /*#__PURE__*/React.createElement("button", {
         className: "btn btn-transparent pull-left",
         disabled: true
       }, /*#__PURE__*/React.createElement("h4", {
         className: "modal-title"
       }, "Add a Recipe")), /*#__PURE__*/React.createElement("button", {
-        className: "btn btn-transparent pull-right"
+        className: "btn btn-transparent pull-right",
+        onClick: this.exit
       }, /*#__PURE__*/React.createElement(_reactIcons.IconContext.Provider, {
         value: {
           className: 'icon-md'
@@ -104,7 +115,13 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
-        className: "form-control"
+        className: "form-control",
+        value: this.state.title,
+        onChange: function onChange(e) {
+          _this2.setState({
+            title: e.target.value
+          });
+        }
       }))), /*#__PURE__*/React.createElement("div", {
         className: "row"
       }, /*#__PURE__*/React.createElement("div", {
@@ -115,7 +132,14 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("input", {
         type: "file",
-        className: "form-control"
+        className: "form-control",
+        accept: "image/*",
+        ref: this.fileRef,
+        onChange: function onChange(e) {
+          _this2.setState({
+            img: e.target.files[0]
+          });
+        }
       }))), /*#__PURE__*/React.createElement("div", {
         className: "input-group form-group"
       }, /*#__PURE__*/React.createElement("div", {
@@ -132,7 +156,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group form-group"
       }, /*#__PURE__*/React.createElement("div", {
         className: "input-group-prepend"
-      }, /*#__PURE__*/React.createElement(_md.MdKitchen, null), " Prep Time"), /*#__PURE__*/React.createElement("div", {
+      }, "Prep Time"), /*#__PURE__*/React.createElement("div", {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
@@ -149,7 +173,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group form-group"
       }, /*#__PURE__*/React.createElement("div", {
         className: "input-group-prepend"
-      }, /*#__PURE__*/React.createElement(_io.IoIosFlame, null), " Cook Time"), /*#__PURE__*/React.createElement("div", {
+      }, "Cook Time"), /*#__PURE__*/React.createElement("div", {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
@@ -162,7 +186,27 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
             cookTime: _this2.parseDuration(e.target.value)
           });
         }
-      }))))));
+      })))), /*#__PURE__*/React.createElement("div", {
+        className: "row text-section"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "form-group"
+      }, /*#__PURE__*/React.createElement("label", null, "Ingredients"), /*#__PURE__*/React.createElement("textarea", {
+        className: "form-control",
+        placeholder: "Separate each ingredient with a comma"
+      })), /*#__PURE__*/React.createElement("div", {
+        className: "form-group"
+      }, /*#__PURE__*/React.createElement("label", null, "Directions"), /*#__PURE__*/React.createElement("textarea", {
+        className: "form-control",
+        placeholder: "Separate each direction with a comma"
+      }))), /*#__PURE__*/React.createElement("x-taginput", null), /*#__PURE__*/React.createElement("div", {
+        className: "toolbar-actions pull-right",
+        style: {
+          alignSelf: 'flex-end'
+        }
+      }, /*#__PURE__*/React.createElement("x-button", {
+        className: "",
+        onClick: this.submit
+      }, "Save"))));
     }
   }]);
   return ModalForm;
