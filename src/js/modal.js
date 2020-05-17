@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { remote } from 'electron';
 import ModalForm from '../components/ModalForm';
 const isDev = require('electron-is-dev');
-const isDark = require('electron').remote.nativeTheme.shouldUseDarkColors;
 
 window.onload = () => {
   ReactDOM.render(<ModalForm />, document.getElementById('root'));
@@ -12,7 +12,7 @@ window.onload = () => {
     document.body.appendChild(script);
   }
 
-  if (isDark) {
+  if (remote.getGlobal('DARK_MODE')) {
     var win = document.getElementsByClassName('window')[0];
     win.classList.add('dark');
   }

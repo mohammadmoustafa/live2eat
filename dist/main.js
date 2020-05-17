@@ -12,7 +12,8 @@ var _require = require('electron'),
     app = _require.app,
     BrowserWindow = _require.BrowserWindow,
     Menu = _require.Menu,
-    ipcMain = _require.ipcMain; // const {autoUpdater} = require('electron-updater');
+    ipcMain = _require.ipcMain,
+    nativeTheme = _require.nativeTheme; // const {autoUpdater} = require('electron-updater');
 
 
 var _require2 = require('electron-util'),
@@ -34,6 +35,9 @@ var url = require('url');
 
 var Mousetrap = require('mousetrap');
 
+var isDark = nativeTheme.shouldUseDarkColors;
+var USER_DARK = false;
+global.DARK_MODE = isDark && USER_DARK;
 unhandled(); // if (isDev) debug();
 
 contextMenu(); // Note: Must match `build.appId` in package.json

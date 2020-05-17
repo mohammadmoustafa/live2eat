@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const {app, BrowserWindow, Menu, ipcMain} = require('electron');
+const {app, BrowserWindow, Menu, ipcMain, nativeTheme} = require('electron');
 // const {autoUpdater} = require('electron-updater');
 const {is} = require('electron-util');
 const unhandled = require('electron-unhandled');
@@ -11,6 +11,10 @@ const isDev = require('electron-is-dev');
 const logger = require('electron-timber');
 const url = require('url');
 var Mousetrap = require('mousetrap');
+
+const isDark = nativeTheme.shouldUseDarkColors;
+const USER_DARK = false;
+global.DARK_MODE = isDark && USER_DARK;
 
 unhandled();
 // if (isDev) debug();

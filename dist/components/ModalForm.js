@@ -31,11 +31,11 @@ var _md = require("react-icons/md");
 
 var _bs = require("react-icons/bs");
 
+var _data = _interopRequireDefault(require("../assets/data.json"));
+
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-var logger = require('electron-timber');
 
 var ModalForm = /*#__PURE__*/function (_React$Component) {
   (0, _inherits2["default"])(ModalForm, _React$Component);
@@ -53,13 +53,16 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
       prepTime: [0, 0, ''],
       cookTime: [0, 0, ''],
       directions: [],
+      dirTextVal: '',
       ingredients: [],
-      tags: []
+      ingrTextVal: '',
+      category: 'Select A Category'
     };
     _this.fileRef = React.createRef();
     _this.exit = _this.exit.bind((0, _assertThisInitialized2["default"])(_this));
     _this.submit = _this.submit.bind((0, _assertThisInitialized2["default"])(_this));
     _this.parseDuration = _this.parseDuration.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.parseIngredient = _this.parseIngredient.bind((0, _assertThisInitialized2["default"])(_this));
     return _this;
   }
 
@@ -76,6 +79,28 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
       return [hours, mins, duration];
     }
   }, {
+    key: "parseIngredient",
+    value: function parseIngredient(ingredients) {
+      if (ingredients == null || ingredients === '') return '';
+      var result = [];
+
+      var units = _data["default"].units.join('|');
+
+      var irx = new RegExp(['^(\\b\\d{1,4}(\\b\\.\\d\\b)?)[ ]*', "(\\b".concat(units, ")s? "), '(\\b[^\\d\\W]+\\b)$'].join(''));
+      ingredients.split(',').forEach(function (ingredient) {
+        var string = ingredient.trim();
+
+        if (irx.test(string)) {
+          var exec = irx.exec(string);
+          result.push([exec[1], exec[3], exec[4]]);
+        }
+      });
+      this.setState({
+        ingredients: result,
+        ingrTextVal: ingredients
+      });
+    }
+  }, {
     key: "exit",
     value: function exit() {
       _electron.remote.getCurrentWindow().close();
@@ -83,7 +108,16 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "submit",
     value: function submit() {
-      console.log('clear it');
+      var recipe = {
+        title: this.state.title,
+        img: this.state.img,
+        prepTime: this.state.prepTime,
+        cookTime: this.state.cookTime,
+        directions: this.state.directions,
+        ingredients: this.state.ingredients,
+        category: this.state.category
+      };
+      console.log(recipe);
       this.fileRef.current.value = '';
     }
   }, {
@@ -116,6 +150,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
         className: "form-control",
+        required: true,
         value: this.state.title,
         onChange: function onChange(e) {
           _this2.setState({
@@ -149,7 +184,8 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/React.createElement("input", {
         type: "number",
         className: "form-control",
-        min: 1
+        min: 1,
+        required: true
       })))), /*#__PURE__*/React.createElement("div", {
         className: "row"
       }, /*#__PURE__*/React.createElement("div", {
@@ -160,10 +196,11 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
-        placeholder: "1hr 30m",
+        placeholder: "e.g. 1hr 30m",
         className: "form-control",
         min: 1,
         value: this.state.prepTime[-1],
+        required: true,
         onChange: function onChange(e) {
           _this2.setState({
             prepTime: _this2.parseDuration(e.target.value)
@@ -177,10 +214,11 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
-        placeholder: "25m",
+        placeholder: "e.g. 25m",
         className: "form-control",
         min: 1,
         value: this.state.cookTime[-1],
+        required: true,
         onChange: function onChange(e) {
           _this2.setState({
             cookTime: _this2.parseDuration(e.target.value)
@@ -192,13 +230,55 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "form-group"
       }, /*#__PURE__*/React.createElement("label", null, "Ingredients"), /*#__PURE__*/React.createElement("textarea", {
         className: "form-control",
-        placeholder: "Separate each ingredient with a comma"
+        required: true,
+        value: this.state.ingrTextVal,
+        placeholder: "Separate each ingredient with a comma",
+        onChange: function onChange(e) {
+          return _this2.parseIngredient(e.target.value);
+        }
       })), /*#__PURE__*/React.createElement("div", {
         className: "form-group"
       }, /*#__PURE__*/React.createElement("label", null, "Directions"), /*#__PURE__*/React.createElement("textarea", {
         className: "form-control",
-        placeholder: "Separate each direction with a comma"
-      }))), /*#__PURE__*/React.createElement("x-taginput", null), /*#__PURE__*/React.createElement("div", {
+        required: true,
+        value: this.state.dirTextVal,
+        placeholder: "Separate each direction with a comma",
+        onChange: function onChange(e) {
+          var result = e.target.value.split(',').map(function (s) {
+            return s.trim();
+          });
+
+          _this2.setState({
+            directions: result,
+            dirTextVal: e.target.value
+          });
+        }
+      }))), /*#__PURE__*/React.createElement("div", {
+        className: "row"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "input-group form-group"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "input-group-prepend"
+      }, "Category"), /*#__PURE__*/React.createElement("div", {
+        className: "input-group-area"
+      }, /*#__PURE__*/React.createElement("select", {
+        className: "form-control",
+        defaultValue: "DEFAULT",
+        required: true,
+        onChange: function onChange(e) {
+          return _this2.setState({
+            category: e.target.value
+          });
+        }
+      }, /*#__PURE__*/React.createElement("option", {
+        value: "DEFAULT",
+        disabled: true
+      }, "Select A Category"), _data["default"].categories.map(function (v, i) {
+        return /*#__PURE__*/React.createElement("option", {
+          value: v.value,
+          key: i
+        }, v.label);
+      }))))), /*#__PURE__*/React.createElement("div", {
         className: "toolbar-actions pull-right",
         style: {
           alignSelf: 'flex-end'

@@ -142,6 +142,15 @@ img {
 	flex: 1;
 }
 
+.input-group-area > * {
+	height: 100%;
+}
+
+.input-group-area > select {
+	border: none;
+	margin-bottom: 10px;
+}
+
 .space-fill {
 	flex: 1 0 auto;
 }

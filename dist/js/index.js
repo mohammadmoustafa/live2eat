@@ -8,11 +8,11 @@ var React = _interopRequireWildcard(require("react"));
 
 var ReactDOM = _interopRequireWildcard(require("react-dom"));
 
+var _electron = require("electron");
+
 var _app = _interopRequireDefault(require("../components/app"));
 
 var isDev = require('electron-is-dev');
-
-var isDark = require('electron').remote.nativeTheme.shouldUseDarkColors;
 
 window.onload = function () {
   ReactDOM.render( /*#__PURE__*/React.createElement(_app["default"], null), document.getElementById('root'));
@@ -23,7 +23,7 @@ window.onload = function () {
     document.body.appendChild(script);
   }
 
-  if (isDark) {
+  if (_electron.remote.getGlobal('DARK_MODE')) {
     var win = document.getElementsByClassName('window')[0];
     win.classList.add('dark');
   }

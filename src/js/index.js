@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { remote } from 'electron';
 import App from '../components/app';
 const isDev = require('electron-is-dev');
-const isDark = require('electron').remote.nativeTheme.shouldUseDarkColors;
+
 
 window.onload = () => {
   ReactDOM.render(<App />, document.getElementById('root'));
@@ -12,7 +13,7 @@ window.onload = () => {
     document.body.appendChild(script);
   }
 
-  if (isDark) {
+  if (remote.getGlobal('DARK_MODE')) {
     var win = document.getElementsByClassName('window')[0];
     win.classList.add('dark');
   }
