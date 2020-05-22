@@ -43,9 +43,9 @@ var App = /*#__PURE__*/function (_React$Component) {
 
   var _super = _createSuper(App);
 
-  function App() {
+  function App(props) {
     (0, _classCallCheck2["default"])(this, App);
-    return _super.apply(this, arguments);
+    return _super.call(this, props);
   }
 
   (0, _createClass2["default"])(App, [{

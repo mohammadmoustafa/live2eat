@@ -10,9 +10,15 @@ var ReactDOM = _interopRequireWildcard(require("react-dom"));
 
 var _electron = require("electron");
 
+var _recipeSchema = _interopRequireDefault(require("../assets/recipeSchema.json"));
+
 var _app = _interopRequireDefault(require("../components/app"));
 
+var _dbContext = require("./db-context");
+
 var isDev = require('electron-is-dev');
+
+var leveldown = require('leveldown');
 
 window.onload = function () {
   ReactDOM.render( /*#__PURE__*/React.createElement(_app["default"], null), document.getElementById('root'));

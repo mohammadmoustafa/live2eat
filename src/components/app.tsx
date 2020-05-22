@@ -7,7 +7,12 @@ const { remote } = require('electron');
 const isDark = remote.nativeTheme.shouldUseDarkColors;
 const logger = require('electron-timber');
 
-export default class App extends React.Component {
+export default class App extends React.Component<any> {
+  
+  constructor(props: any) {
+    super(props);
+  }
+
   render() {
     return (
       <HashRouter>

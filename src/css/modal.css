@@ -36,3 +36,7 @@ form {
   flex-flow: column;
   height: 100%;
 }
+
+textarea {
+  resize: none;
+}

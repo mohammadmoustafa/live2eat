@@ -3,21 +3,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReceipt, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { IconContext } from 'react-icons';
 import { MdAdd } from 'react-icons/md';
+import { DBContext } from '../js/db-context';
+import { ipcRenderer } from 'electron';
+import PouchDB from 'pouchdb-browser';
 
 const logger = require('electron-timber');
 const { remote } = require('electron');
 const url = require('url');
 
-export default class RecipesView extends React.Component<any, any> {
+var firstLoad = false;
+
+class RecipesView extends React.Component<any, any> {
+
+  store: PouchDB.Database<{}>;
 
   constructor(props: any) {
     super(props);
     this.state = {
       recipes: []
     }
+    this.store = new PouchDB('recipes');
     this.handleClick = this.handleClick.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.loadRecipes = this.loadRecipes.bind(this);
   }
+
+  loadRecipes() {
+    console.log('load recipes running.')
+    this.store.allDocs({
+      include_docs: true,
+      attachments: true,
+      binary: true,
+    }).then((docs: any) => {
+      console.log(docs.rows);
+      this.setState({ recipes: docs.rows });
+    }).catch(console.log);
+  }
+
+  componentDidMount() {
+    if (!firstLoad) {
+      firstLoad = false;
+      this.loadRecipes();
+    }
+    ipcRenderer.on('db-refresh', (e: any, arg: any) => {
+      console.log('db-refresh');
+      this.loadRecipes();
+    });
+  }
+
+  // componentWillUnmount() {
+  //   firstLoad = !firstLoad;
+  // }
 
   showModal() {
     let top = remote.getCurrentWindow();
@@ -31,7 +67,7 @@ export default class RecipesView extends React.Component<any, any> {
       width: top.getBounds().width * 0.75,
       height: top.getBounds().height * 0.9
     });
-    logger.log("Modal navigating to html/modal.html");
+
     win.loadURL(url.format({
       protocol: 'file',
       slashes: true,
@@ -39,7 +75,7 @@ export default class RecipesView extends React.Component<any, any> {
     }));
     win.once('ready-to-show', () => {
       win.show();
-    })
+    });
   }
 
   handleClick() {
@@ -51,11 +87,22 @@ export default class RecipesView extends React.Component<any, any> {
       return (
         <React.Fragment>
           <div className="toolbar-actions">
-            <button className="btn btn-transparent pull-right" onClick={this.showModal}>
-              <IconContext.Provider value={{className: 'icon-md'}}>
-                <MdAdd />
-              </IconContext.Provider>
-            </button>
+              <x-button skin="flat" className="btn btn-transparent"
+                style={{ marginLeft: '4px', paddingTop: '2px', float: 'right'}}>
+                <x-label>
+                  <IconContext.Provider value={{className: 'icon-md'}}>
+                    <MdAdd />
+                  </IconContext.Provider>
+                </x-label>
+                <x-menu>
+                  <x-menuitem>
+                    <x-label onClick={this.showModal}>Add new recipe</x-label>
+                  </x-menuitem>
+                  <x-menuitem disabled>
+                    <x-label>Import from URL</x-label>
+                  </x-menuitem>
+                </x-menu>
+              </x-button>
           </div>
           <header className="body">
             <FontAwesomeIcon icon={faReceipt} className="icon-xl" style={{marginBottom: "15px"}} />
@@ -68,25 +115,67 @@ export default class RecipesView extends React.Component<any, any> {
         <React.Fragment>
           <ul className="list-group">
             <li className="list-group-header">
-              <input className="form-control" type="text" placeholder="Search for someone" />
-            </li>
-            {/* <li className="list-group-item">
-              <img className="img-circle media-object pull-left" src="" width="64" height="64" />
-              <div className="media-body">
-                <strong>List item title</strong>
-                <p>Lorem ipsum dolor sit amet.</p>
+              <div className="row">
+              <input className="form-control" type="text" placeholder="Search for a recipe" />
+              <x-button skin="flat" className="btn btn-transparent pull-right"
+                style={{ marginLeft: '4px', paddingTop: '2px', float: 'right'}}>
+                <x-label>
+                    <IconContext.Provider value={{className: 'icon-md'}}>
+                      <MdAdd />
+                    </IconContext.Provider>
+                </x-label>
+                <x-menu>
+                  <x-menuitem>
+                    <x-label onClick={this.showModal}>Add new recipe</x-label>
+                  </x-menuitem>
+                  <x-menuitem disabled>
+                    <x-label>Import from URL</x-label>
+                  </x-menuitem>
+                </x-menu>
+              </x-button>
               </div>
-            </li> */}
-            <li className="list-group-item">
-              <img className="img-circle media-object pull-left" src="https://via.placeholder.com/150" width="32" height="32" />
-              <div className="media-body">
-                <strong>List item title</strong>
-                <p>Lorem ipsum dolor sit amet.</p>
-              </div>
             </li>
+              { this.state.recipes.map((row: any) => {
+                return (
+                  <li className="list-group-item" key={row.doc._id}>
+                    <img className="img-rounded media-object thumb pull-right"
+                      src={URL.createObjectURL(row.doc._attachments.img.data)}
+                      width="192" height="128" />
+                    <div className="media-body">
+                      <h3>{row.doc.title}</h3>
+                    </div>
+                    <x-contextmenu>
+                      <x-menu>
+                        <x-menuitem disabled>
+                          <x-icon name="visibility"></x-icon>
+                          <x-label>View</x-label>
+                        </x-menuitem>
+                        <x-menuitem disabled>
+                          <x-icon name="create"></x-icon>
+                          <x-label>Edit</x-label>
+                        </x-menuitem>
+                        <hr />
+                        <x-menuitem disabled>
+                          <x-icon name="delete"></x-icon>
+                          <x-label>Delete '{row.doc.title}'</x-label>
+                        </x-menuitem>
+                      </x-menu>
+                    </x-contextmenu>
+                  </li>
+                )
+              }) }
+              {/* <li className="list-group-item">
+                <img className="img-circle media-object pull-left" src="" width="64" height="64" />
+                <div className="media-body">
+                  <strong>List item title</strong>
+                  <p>Lorem ipsum dolor sit amet.</p>
+                </div>
+              </li> */}
           </ul>
         </React.Fragment>
       );
     }
   }
 }
+RecipesView.contextType = DBContext;
+export default RecipesView;

@@ -1,36 +1,50 @@
 import * as React from 'react';
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import { IconContext } from 'react-icons';
 import { MdClear } from 'react-icons/md';
 import { BsCardImage } from 'react-icons/bs';
+import FlakeIdGen from 'flake-idgen';
+const intformat = require('biguint-format');
 import DATA from '../assets/data.json';
+import PouchDB from 'pouchdb-browser';
+import Mousetrap from 'mousetrap';
+
+const generator = new FlakeIdGen();
 
 export default class ModalForm extends React.Component<any, any> {
 
   fileRef: any;
+  store: any;
 
   constructor(props: any) {
     super(props);
     this.state = {
+      _id: intformat(generator.next(), 'hex'),
       title: '',
       img: '',
-      prepTime: [0, 0, ''],
-      cookTime: [0, 0, ''],
+      serves: '',
+      prepTime: { hours: 0, mins: 0, label: ''},
+      cookTime: { hours: 0, mins: 0, label: ''},
       directions: [],
       dirTextVal: '',
       ingredients: [],
       ingrTextVal: '',
-      category: 'Select A Category'
+      category: 'Select A Category',
+      notes: ''
     }
     this.fileRef = React.createRef();
+    this.store = new PouchDB('recipes');
     this.exit = this.exit.bind(this);
     this.submit = this.submit.bind(this);
     this.parseDuration = this.parseDuration.bind(this);
     this.parseIngredient = this.parseIngredient.bind(this);
   }
 
+  componentDidMount() {
+    Mousetrap.bind('esc', this.exit, 'keyup');
+  }
+
   parseDuration(duration: string) {
-    if (duration == null || duration === '') return 0;
     let mrx: RegExp = new RegExp(/([0-9][0-9]?)[ ]?m/);
     let hrx: RegExp = new RegExp(/([0-9][0-9]?)[ ]?hr/);
     let hours: number = 0;
@@ -38,21 +52,20 @@ export default class ModalForm extends React.Component<any, any> {
 
     if (mrx.test(duration)) mins = parseInt(mrx.exec(duration)[1]);
     if (hrx.test(duration)) hours = parseInt(hrx.exec(duration)[1]);
-    return ([hours, mins, duration]);
+    return ({hours: hours, mins: mins, label: duration});
   }
 
   parseIngredient(ingredients: string) {
-    if (ingredients == null || ingredients === '') return '';
-    let result: Array<string[]> = [];
+    let result: Array<object> = [];
     let units = DATA.units.join('|');
-    let irx: RegExp = new RegExp(['^(\\b\\d{1,4}(\\b\\.\\d\\b)?)[ ]*',
-      `(\\b${units})s? `,
-      '(\\b[^\\d\\W]+\\b)$'].join(''));
+    let irx: RegExp = new RegExp(['^(\\d{1,4}(\\.\\d)?)[ ]?',
+      `(${units})s? `,
+      '(\\b[^\\d\\W]+(\\b[ |\\W][^\\d\\W]+\\b)*\\b)$'].join(''));
     ingredients.split(',').forEach((ingredient: string) => {
       let string = ingredient.trim();
       if (irx.test(string)) {
         let exec = irx.exec(string);
-        result.push([exec[1], exec[3], exec[4]]);
+        result.push({ quantity: exec[1], unit: exec[3], label: exec[4]});
       }
     });
     this.setState({ ingredients: result, ingrTextVal: ingredients });
@@ -63,17 +76,42 @@ export default class ModalForm extends React.Component<any, any> {
   }
 
   submit() {
+    console.log(this.state.img);
+
     let recipe: any = {
+      _id: this.state._id,
+      _attachments: {
+        'img': {
+          data: this.state.img,
+          content_type: this.state.img.type
+        }
+      },
       title: this.state.title,
-      img: this.state.img,
+      serves: parseInt(this.state.serves),
       prepTime: this.state.prepTime,
       cookTime: this.state.cookTime,
       directions: this.state.directions,
       ingredients: this.state.ingredients,
       category: this.state.category,
+      notes: this.state.notes
     }
-    console.log(recipe);
-    this.fileRef.current.value = '';
+    this.store.put(recipe).then((doc: any) => {
+      this.setState({
+        title: '',
+        img: null,
+        serves: '',
+        prepTime: { hours: 0, mins: 0, label: ""},
+        cookTime: { hours: 0, mins: 0, label: ""},
+        directions: [],
+        ingredients: [],
+        category: 'Select A Category',
+        notes: ''
+      });
+      this.fileRef.current.value = '';
+      ipcRenderer.send('db-refresh-request');
+      this.exit(); 
+    }).catch(console.log);
+    
   }
 
 
@@ -98,7 +136,7 @@ export default class ModalForm extends React.Component<any, any> {
             <div className="input-group form-group">
               <div className="input-group-prepend">Recipe</div>
               <div className="input-group-area">
-                <input type="text" className="form-control" required
+                <input type="text" className="form-control"
                   value={this.state.title}
                   onChange={(e: any) => {
                     this.setState({ title: e.target.value });
@@ -122,7 +160,10 @@ export default class ModalForm extends React.Component<any, any> {
               <div className="input-group form-group">
                 <div className="input-group-prepend">Serves</div>
                 <div className="input-group-area">
-                  <input type="number" className="form-control" min={1} required/>
+                  <input type="number" className="form-control" min={1}
+                    value={this.state.serves}
+                    onChange={(e: any) => this.setState({ serves: e.target.value })}
+                    />
                 </div>
               </div>
             </div>
@@ -133,8 +174,7 @@ export default class ModalForm extends React.Component<any, any> {
                 <div className="input-group-prepend">Prep Time</div>
                 <div className="input-group-area">
                   <input type="text" placeholder="e.g. 1hr 30m" className="form-control" min={1}
-                    value={this.state.prepTime[-1]}
-                    required
+                    value={this.state.prepTime.label}
                     onChange={(e: any) => {
                       this.setState({ prepTime: this.parseDuration(e.target.value) });
                     }}/>
@@ -144,8 +184,7 @@ export default class ModalForm extends React.Component<any, any> {
                 <div className="input-group-prepend">Cook Time</div>
                 <div className="input-group-area">
                   <input type="text" placeholder="e.g. 25m" className="form-control" min={1}
-                    value={this.state.cookTime[-1]}
-                    required
+                    value={this.state.cookTime.label}
                     onChange={(e: any) => {
                       this.setState({ cookTime: this.parseDuration(e.target.value) });
                     }}/>
@@ -153,33 +192,13 @@ export default class ModalForm extends React.Component<any, any> {
               </div>
             </div>
 
-            {/* Ingredients & Directions */}
-            <div className="row text-section">
-              <div className="form-group">
-                <label>Ingredients</label>
-                <textarea className="form-control" required
-                  value={this.state.ingrTextVal}
-                  placeholder="Separate each ingredient with a comma"
-                  onChange={(e: any) => this.parseIngredient(e.target.value)} />
-              </div>
-              <div className="form-group">
-                <label>Directions</label>
-                <textarea className="form-control" required
-                  value={this.state.dirTextVal}
-                  placeholder="Separate each direction with a comma"
-                  onChange={(e: any) => {
-                    var result = e.target.value.split(',').map((s: string) => s.trim());
-                    this.setState({ directions: result, dirTextVal: e.target.value})
-                  }} />
-              </div>
-            </div>
             <div className="row">
               <div className="input-group form-group">
                 <div className="input-group-prepend">
                   Category
                 </div>
                 <div className="input-group-area">
-                  <select className="form-control" defaultValue="DEFAULT" required
+                  <select className="form-control" defaultValue="DEFAULT"
                     onChange={(e: any) => this.setState({ category: e.target.value })}>
                     <option value="DEFAULT" disabled>Select A Category</option>
                     {
@@ -191,6 +210,35 @@ export default class ModalForm extends React.Component<any, any> {
                 </div>
               </div>
             </div>
+
+            {/* Ingredients & Directions */}
+            <div className="row text-section">
+              <div className="form-group">
+                <label>Ingredients</label>
+                <textarea className="form-control"
+                  value={this.state.ingrTextVal}
+                  placeholder="Separate each ingredient with a comma"
+                  onChange={(e: any) => this.parseIngredient(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>Directions</label>
+                <textarea className="form-control"
+                  value={this.state.dirTextVal}
+                  placeholder="Separate each direction with a comma"
+                  onChange={(e: any) => {
+                    var result = e.target.value.split(',').map((s: string) => s.trim());
+                    this.setState({ directions: result, dirTextVal: e.target.value})
+                  }} />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label>Notes</label>
+              <textarea className="form-control" rows={1}
+                value={this.state.notes}
+                onChange={(e: any) => this.setState({ notes: e.target.value })} />
+            </div>
+
             <div className="toolbar-actions pull-right"
               style={{ alignSelf: 'flex-end' }}>
               <x-button className="" onClick={this.submit}>

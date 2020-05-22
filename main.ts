@@ -1,7 +1,15 @@
 'use strict';
+import {
+	app,
+	BrowserWindow,
+	Menu,
+	ipcMain as ipc, 
+	nativeTheme,
+	ipcMain
+} from 'electron';
+import PouchDB from 'pouchdb';
+
 const path = require('path');
-const {app, BrowserWindow, Menu, ipcMain, nativeTheme} = require('electron');
-// const {autoUpdater} = require('electron-updater');
 const {is} = require('electron-util');
 const unhandled = require('electron-unhandled');
 const debug = require('electron-debug');
@@ -15,6 +23,8 @@ var Mousetrap = require('mousetrap');
 const isDark = nativeTheme.shouldUseDarkColors;
 const USER_DARK = false;
 global.DARK_MODE = isDark && USER_DARK;
+
+
 
 unhandled();
 // if (isDev) debug();
@@ -101,3 +111,6 @@ app.on('activate', async () => {
 	mainWindow = await createMainWindow();
 })();
 
+ipcMain.on('db-refresh-request', (e: any, arg: any) => {
+	mainWindow.webContents.send('db-refresh');
+})

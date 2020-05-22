@@ -1,8 +1,9 @@
 {
   "categories": [
     { "value": "appetizer", "label": "Appetizers" },
-    { "value": "beverage", "label": "Beverages" },
     { "value": "bread", "label": "Breads" },
+    { "value": "breakfast", "label": "Breakfasts" },
+    { "value": "beverage", "label": "Beverages" },
     { "value": "casserole", "label": "Casseroles" },
     { "value": "dessert", "label": "Desserts" },
     { "value": "meat", "label": "Meats" },

@@ -29,6 +29,12 @@ var _reactIcons = require("react-icons");
 
 var _md = require("react-icons/md");
 
+var _dbContext = require("../js/db-context");
+
+var _electron = require("electron");
+
+var _pouchdbBrowser = _interopRequireDefault(require("pouchdb-browser"));
+
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
@@ -39,6 +45,8 @@ var _require = require('electron'),
     remote = _require.remote;
 
 var url = require('url');
+
+var firstLoad = false;
 
 var RecipesView = /*#__PURE__*/function (_React$Component) {
   (0, _inherits2["default"])(RecipesView, _React$Component);
@@ -53,12 +61,51 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
     _this.state = {
       recipes: []
     };
+    _this.store = new _pouchdbBrowser["default"]('recipes');
     _this.handleClick = _this.handleClick.bind((0, _assertThisInitialized2["default"])(_this));
     _this.showModal = _this.showModal.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.loadRecipes = _this.loadRecipes.bind((0, _assertThisInitialized2["default"])(_this));
     return _this;
   }
 
   (0, _createClass2["default"])(RecipesView, [{
+    key: "loadRecipes",
+    value: function loadRecipes() {
+      var _this2 = this;
+
+      console.log('load recipes running.');
+      this.store.allDocs({
+        include_docs: true,
+        attachments: true,
+        binary: true
+      }).then(function (docs) {
+        console.log(docs.rows);
+
+        _this2.setState({
+          recipes: docs.rows
+        });
+      })["catch"](console.log);
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this3 = this;
+
+      if (!firstLoad) {
+        firstLoad = false;
+        this.loadRecipes();
+      }
+
+      _electron.ipcRenderer.on('db-refresh', function (e, arg) {
+        console.log('db-refresh');
+
+        _this3.loadRecipes();
+      });
+    } // componentWillUnmount() {
+    //   firstLoad = !firstLoad;
+    // }
+
+  }, {
     key: "showModal",
     value: function showModal() {
       var top = remote.getCurrentWindow();
@@ -72,7 +119,6 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
         width: top.getBounds().width * 0.75,
         height: top.getBounds().height * 0.9
       });
-      logger.log("Modal navigating to html/modal.html");
       win.loadURL(url.format({
         protocol: 'file',
         slashes: true,
@@ -93,14 +139,23 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
       if (this.state.recipes.length === 0) {
         return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("div", {
           className: "toolbar-actions"
-        }, /*#__PURE__*/_react["default"].createElement("button", {
-          className: "btn btn-transparent pull-right",
-          onClick: this.showModal
-        }, /*#__PURE__*/_react["default"].createElement(_reactIcons.IconContext.Provider, {
+        }, /*#__PURE__*/_react["default"].createElement("x-button", {
+          skin: "flat",
+          className: "btn btn-transparent",
+          style: {
+            marginLeft: '4px',
+            paddingTop: '2px',
+            "float": 'right'
+          }
+        }, /*#__PURE__*/_react["default"].createElement("x-label", null, /*#__PURE__*/_react["default"].createElement(_reactIcons.IconContext.Provider, {
           value: {
             className: 'icon-md'
           }
-        }, /*#__PURE__*/_react["default"].createElement(_md.MdAdd, null)))), /*#__PURE__*/_react["default"].createElement("header", {
+        }, /*#__PURE__*/_react["default"].createElement(_md.MdAdd, null))), /*#__PURE__*/_react["default"].createElement("x-menu", null, /*#__PURE__*/_react["default"].createElement("x-menuitem", null, /*#__PURE__*/_react["default"].createElement("x-label", {
+          onClick: this.showModal
+        }, "Add new recipe")), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
+          disabled: true
+        }, /*#__PURE__*/_react["default"].createElement("x-label", null, "Import from URL"))))), /*#__PURE__*/_react["default"].createElement("header", {
           className: "body"
         }, /*#__PURE__*/_react["default"].createElement(_reactFontawesome.FontAwesomeIcon, {
           icon: _freeSolidSvgIcons.faReceipt,
@@ -116,24 +171,59 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
           className: "list-group"
         }, /*#__PURE__*/_react["default"].createElement("li", {
           className: "list-group-header"
+        }, /*#__PURE__*/_react["default"].createElement("div", {
+          className: "row"
         }, /*#__PURE__*/_react["default"].createElement("input", {
           className: "form-control",
           type: "text",
-          placeholder: "Search for someone"
-        })), /*#__PURE__*/_react["default"].createElement("li", {
-          className: "list-group-item"
-        }, /*#__PURE__*/_react["default"].createElement("img", {
-          className: "img-circle media-object pull-left",
-          src: "https://via.placeholder.com/150",
-          width: "32",
-          height: "32"
-        }), /*#__PURE__*/_react["default"].createElement("div", {
-          className: "media-body"
-        }, /*#__PURE__*/_react["default"].createElement("strong", null, "List item title"), /*#__PURE__*/_react["default"].createElement("p", null, "Lorem ipsum dolor sit amet.")))));
+          placeholder: "Search for a recipe"
+        }), /*#__PURE__*/_react["default"].createElement("x-button", {
+          skin: "flat",
+          className: "btn btn-transparent pull-right",
+          style: {
+            marginLeft: '4px',
+            paddingTop: '2px',
+            "float": 'right'
+          }
+        }, /*#__PURE__*/_react["default"].createElement("x-label", null, /*#__PURE__*/_react["default"].createElement(_reactIcons.IconContext.Provider, {
+          value: {
+            className: 'icon-md'
+          }
+        }, /*#__PURE__*/_react["default"].createElement(_md.MdAdd, null))), /*#__PURE__*/_react["default"].createElement("x-menu", null, /*#__PURE__*/_react["default"].createElement("x-menuitem", null, /*#__PURE__*/_react["default"].createElement("x-label", {
+          onClick: this.showModal
+        }, "Add new recipe")), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
+          disabled: true
+        }, /*#__PURE__*/_react["default"].createElement("x-label", null, "Import from URL")))))), this.state.recipes.map(function (row) {
+          return /*#__PURE__*/_react["default"].createElement("li", {
+            className: "list-group-item",
+            key: row.doc._id
+          }, /*#__PURE__*/_react["default"].createElement("img", {
+            className: "img-rounded media-object thumb pull-right",
+            src: URL.createObjectURL(row.doc._attachments.img.data),
+            width: "192",
+            height: "128"
+          }), /*#__PURE__*/_react["default"].createElement("div", {
+            className: "media-body"
+          }, /*#__PURE__*/_react["default"].createElement("h3", null, row.doc.title)), /*#__PURE__*/_react["default"].createElement("x-contextmenu", null, /*#__PURE__*/_react["default"].createElement("x-menu", null, /*#__PURE__*/_react["default"].createElement("x-menuitem", {
+            disabled: true
+          }, /*#__PURE__*/_react["default"].createElement("x-icon", {
+            name: "visibility"
+          }), /*#__PURE__*/_react["default"].createElement("x-label", null, "View")), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
+            disabled: true
+          }, /*#__PURE__*/_react["default"].createElement("x-icon", {
+            name: "create"
+          }), /*#__PURE__*/_react["default"].createElement("x-label", null, "Edit")), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
+            disabled: true
+          }, /*#__PURE__*/_react["default"].createElement("x-icon", {
+            name: "delete"
+          }), /*#__PURE__*/_react["default"].createElement("x-label", null, "Delete '", row.doc.title, "'")))));
+        })));
       }
     }
   }]);
   return RecipesView;
 }(_react["default"].Component);
 
-exports["default"] = RecipesView;
+RecipesView.contextType = _dbContext.DBContext;
+var _default = RecipesView;
+exports["default"] = _default;

@@ -9,7 +9,7 @@
 		"name": "Mohamed Moustafa",
 		"url": "https://mohammadmoustafa.tech"
 	},
-	"main": "./main.js",
+	"main": "main.js",
 	"scripts": {
 		"start": "gulp start",
 		"pack": "electron-builder --dir",
@@ -27,7 +27,6 @@
 		"electron-debug": "^3.0.0",
 		"electron-is-dev": "^1.2.0",
 		"electron-serve": "^1.0.0",
-		"electron-store": "^5.1.0",
 		"electron-timber": "^0.5.1",
 		"electron-unhandled": "^3.0.0",
 		"electron-updater": "^4.0.6",
@@ -38,7 +37,17 @@
 		"react-dom": "^16.13.1",
 		"react-router-dom": "^5.2.0",
 		"url": "^0.11.0",
-		"xel": "0.0.220"
+		"xel": "0.0.220",
+		"@material-ui/core": "^4.9.14",
+		"@material-ui/icons": "^4.9.1",
+		"@types/flake-idgen": "^0.1.30",
+		"@types/mousetrap": "^1.6.3",
+		"@types/pouchdb": "^6.4.0",
+		"biguint-format": "^1.0.2",
+		"flake-idgen": "^1.4.0",
+		"leveldown": "^5.6.0",
+		"pouchdb-browser": "^7.2.1",
+		"react-icons": "^3.10.0"
 	},
 	"xo": {
 		"envs": [
@@ -52,8 +61,5 @@
 	},
 	"_moduleAliases": {
 		"@components": "./src/components"
-	},
-	"devDependencies": {
-		"@babel/plugin-transform-runtime": "^7.9.6"
 	}
 }

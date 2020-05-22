@@ -6,18 +6,12 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
+var _electron = require("electron");
+
 var path = require('path');
 
-var _require = require('electron'),
-    app = _require.app,
-    BrowserWindow = _require.BrowserWindow,
-    Menu = _require.Menu,
-    ipcMain = _require.ipcMain,
-    nativeTheme = _require.nativeTheme; // const {autoUpdater} = require('electron-updater');
-
-
-var _require2 = require('electron-util'),
-    is = _require2.is;
+var _require = require('electron-util'),
+    is = _require.is;
 
 var unhandled = require('electron-unhandled');
 
@@ -35,14 +29,14 @@ var url = require('url');
 
 var Mousetrap = require('mousetrap');
 
-var isDark = nativeTheme.shouldUseDarkColors;
+var isDark = _electron.nativeTheme.shouldUseDarkColors;
 var USER_DARK = false;
 global.DARK_MODE = isDark && USER_DARK;
 unhandled(); // if (isDev) debug();
 
 contextMenu(); // Note: Must match `build.appId` in package.json
 
-app.setAppUserModelId('com.mohammadmoustafa.live2eat'); // Uncomment this before publishing your first version.
+_electron.app.setAppUserModelId('com.mohammadmoustafa.live2eat'); // Uncomment this before publishing your first version.
 // It's commented out as it throws an error if there are no published versions.
 // if (!is.development) {
 // 	const FOUR_HOURS = 1000 * 60 * 60 * 4;
@@ -54,6 +48,7 @@ app.setAppUserModelId('com.mohammadmoustafa.live2eat'); // Uncomment this before
 // }
 // Prevent window from being garbage collected
 
+
 var mainWindow;
 
 var createMainWindow = /*#__PURE__*/function () {
@@ -63,8 +58,8 @@ var createMainWindow = /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            win = new BrowserWindow({
-              title: app.name,
+            win = new _electron.BrowserWindow({
+              title: _electron.app.name,
               show: false,
               width: 800,
               height: 600,
@@ -106,11 +101,11 @@ var createMainWindow = /*#__PURE__*/function () {
 }(); // Prevent multiple instances of the app
 
 
-if (!app.requestSingleInstanceLock()) {
-  app.quit();
+if (!_electron.app.requestSingleInstanceLock()) {
+  _electron.app.quit();
 }
 
-app.on('second-instance', function () {
+_electron.app.on('second-instance', function () {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
@@ -119,12 +114,14 @@ app.on('second-instance', function () {
     mainWindow.show();
   }
 });
-app.on('window-all-closed', function () {
+
+_electron.app.on('window-all-closed', function () {
   if (!is.macos) {
-    app.quit();
+    _electron.app.quit();
   }
 });
-app.on('activate', /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+
+_electron.app.on('activate', /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
   return _regenerator["default"].wrap(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -147,16 +144,18 @@ app.on('activate', /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*
     }
   }, _callee2);
 })));
+
 (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
   return _regenerator["default"].wrap(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
           _context3.next = 2;
-          return app.whenReady();
+          return _electron.app.whenReady();
 
         case 2:
-          Menu.setApplicationMenu(menu);
+          _electron.Menu.setApplicationMenu(menu);
+
           _context3.next = 5;
           return createMainWindow();
 
@@ -170,3 +169,7 @@ app.on('activate', /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*
     }
   }, _callee3);
 }))();
+
+_electron.ipcMain.on('db-refresh-request', function (e, arg) {
+  mainWindow.webContents.send('db-refresh');
+});

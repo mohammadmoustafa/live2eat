@@ -31,7 +31,7 @@ gulp.task('js', () => {
 })
 
 gulp.task('ts', () => {
-  return gulp.src('main.ts')
+  return gulp.src(['main.ts'])
     .pipe(babel())
     .pipe(gulp.dest('dist/'))
     .pipe(connect.reload());
@@ -43,16 +43,6 @@ gulp.task('tsx', () => {
     .pipe(gulp.dest('dist/components/', { base: '.' }))
     .pipe(connect.reload());
 });
-
-// // compile JS/TS files and move them to app folder
-// gulp.task('ts', () => {
-//   return tsProject.src()
-//     .pipe(tsProject())
-//     .js
-//     .pipe(gulp.src(['src/js/*.js'], {base: './'}))
-//     .pipe(gulp.dest('dist', {overwrite: true}))
-//     .pipe(connect.reload());
-// });
 
 gulp.task('images', () => {
   return gulp.src('src/assets/*')
