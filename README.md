@@ -2,6 +2,7 @@
 
 > A app for storing your favourite recipes and conveniently changing portion sizes on the fly.
 
+**README still needs updating, not currently accurate**
 
 ## Install
 
