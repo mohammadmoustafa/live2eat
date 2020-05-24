@@ -35,6 +35,8 @@ var _electron = require("electron");
 
 var _pouchdbBrowser = _interopRequireDefault(require("pouchdb-browser"));
 
+var _reactInfiniteScrollComponent = _interopRequireDefault(require("react-infinite-scroll-component"));
+
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
@@ -46,6 +48,9 @@ var _require = require('electron'),
 
 var url = require('url');
 
+var Dialogs = require('dialogs');
+
+var dialogs = Dialogs();
 var firstLoad = false;
 
 var RecipesView = /*#__PURE__*/function (_React$Component) {
@@ -59,12 +64,17 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
     (0, _classCallCheck2["default"])(this, RecipesView);
     _this = _super.call(this, props);
     _this.state = {
-      recipes: []
+      recipes: [],
+      display: [],
+      query: ''
     };
     _this.store = new _pouchdbBrowser["default"]('recipes');
     _this.handleClick = _this.handleClick.bind((0, _assertThisInitialized2["default"])(_this));
     _this.showModal = _this.showModal.bind((0, _assertThisInitialized2["default"])(_this));
     _this.loadRecipes = _this.loadRecipes.bind((0, _assertThisInitialized2["default"])(_this));
+    _this["delete"] = _this["delete"].bind((0, _assertThisInitialized2["default"])(_this));
+    _this.search = _this.search.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.edit = _this.edit.bind((0, _assertThisInitialized2["default"])(_this));
     return _this;
   }
 
@@ -82,7 +92,8 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
         console.log(docs.rows);
 
         _this2.setState({
-          recipes: docs.rows
+          recipes: docs.rows,
+          display: docs.rows
         });
       })["catch"](console.log);
     }
@@ -97,17 +108,27 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
       }
 
       _electron.ipcRenderer.on('db-refresh', function (e, arg) {
-        console.log('db-refresh');
-
         _this3.loadRecipes();
       });
-    } // componentWillUnmount() {
-    //   firstLoad = !firstLoad;
-    // }
-
+    }
+  }, {
+    key: "search",
+    value: function search(query) {
+      this.setState({
+        query: query,
+        display: this.state.recipes.filter(function (row) {
+          return row.doc.title.toLowerCase().includes(query.toLowerCase());
+        })
+      });
+    }
+  }, {
+    key: "edit",
+    value: function edit(doc) {
+      this.showModal(doc);
+    }
   }, {
     key: "showModal",
-    value: function showModal() {
+    value: function showModal(arg) {
       var top = remote.getCurrentWindow();
       var win = new remote.BrowserWindow({
         parent: top,
@@ -126,6 +147,16 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
       }));
       win.once('ready-to-show', function () {
         win.show();
+        if (arg) win.webContents.send('recipe-edit', arg);
+      });
+    }
+  }, {
+    key: "delete",
+    value: function _delete(id, rev) {
+      var _this4 = this;
+
+      dialogs.confirm("Are you sure you want to delete this recipe?", function (res) {
+        if (res) _this4.store.remove(id, rev).then(_this4.loadRecipes)["catch"](console.log);
       });
     }
   }, {
@@ -136,6 +167,8 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
+      var _this5 = this;
+
       if (this.state.recipes.length === 0) {
         return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("div", {
           className: "toolbar-actions"
@@ -176,7 +209,10 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
         }, /*#__PURE__*/_react["default"].createElement("input", {
           className: "form-control",
           type: "text",
-          placeholder: "Search for a recipe"
+          placeholder: "Search for a recipe",
+          onChange: function onChange(e) {
+            return _this5.search(e.target.value);
+          }
         }), /*#__PURE__*/_react["default"].createElement("x-button", {
           skin: "flat",
           className: "btn btn-transparent pull-right",
@@ -193,7 +229,16 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
           onClick: this.showModal
         }, "Add new recipe")), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
           disabled: true
-        }, /*#__PURE__*/_react["default"].createElement("x-label", null, "Import from URL")))))), this.state.recipes.map(function (row) {
+        }, /*#__PURE__*/_react["default"].createElement("x-label", null, "Import from URL")))))), /*#__PURE__*/_react["default"].createElement(_reactInfiniteScrollComponent["default"], {
+          dataLength: this.state.display.length,
+          loader: /*#__PURE__*/_react["default"].createElement("x-throbber", null),
+          endMessage: /*#__PURE__*/_react["default"].createElement("p", {
+            style: {
+              textAlign: 'center',
+              opacity: '0.7'
+            }
+          }, "The end.")
+        }, this.state.display.map(function (row) {
           return /*#__PURE__*/_react["default"].createElement("li", {
             className: "list-group-item",
             key: row.doc._id
@@ -204,20 +249,24 @@ var RecipesView = /*#__PURE__*/function (_React$Component) {
             height: "128"
           }), /*#__PURE__*/_react["default"].createElement("div", {
             className: "media-body"
-          }, /*#__PURE__*/_react["default"].createElement("h3", null, row.doc.title)), /*#__PURE__*/_react["default"].createElement("x-contextmenu", null, /*#__PURE__*/_react["default"].createElement("x-menu", null, /*#__PURE__*/_react["default"].createElement("x-menuitem", {
+          }, /*#__PURE__*/_react["default"].createElement("h3", null, row.doc.title), /*#__PURE__*/_react["default"].createElement("h5", null, "Prep Time: ", row.doc.prepTime.label), /*#__PURE__*/_react["default"].createElement("h5", null, "Cook Time: ", row.doc.cookTime.label)), /*#__PURE__*/_react["default"].createElement("x-contextmenu", null, /*#__PURE__*/_react["default"].createElement("x-menu", null, /*#__PURE__*/_react["default"].createElement("x-menuitem", {
             disabled: true
           }, /*#__PURE__*/_react["default"].createElement("x-icon", {
             name: "visibility"
           }), /*#__PURE__*/_react["default"].createElement("x-label", null, "View")), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
-            disabled: true
+            onClick: function onClick() {
+              return _this5.edit(row.doc);
+            }
           }, /*#__PURE__*/_react["default"].createElement("x-icon", {
             name: "create"
           }), /*#__PURE__*/_react["default"].createElement("x-label", null, "Edit")), /*#__PURE__*/_react["default"].createElement("hr", null), /*#__PURE__*/_react["default"].createElement("x-menuitem", {
-            disabled: true
+            onClick: function onClick() {
+              return _this5["delete"](row.doc._id, row.doc._rev);
+            }
           }, /*#__PURE__*/_react["default"].createElement("x-icon", {
             name: "delete"
           }), /*#__PURE__*/_react["default"].createElement("x-label", null, "Delete '", row.doc.title, "'")))));
-        })));
+        }))));
       }
     }
   }]);

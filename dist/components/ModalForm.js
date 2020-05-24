@@ -59,6 +59,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
     _this = _super.call(this, props);
     _this.state = {
       _id: intformat(generator.next(), 'hex'),
+      _rev: '',
       title: '',
       img: '',
       serves: '',
@@ -76,8 +77,9 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
       dirTextVal: '',
       ingredients: [],
       ingrTextVal: '',
-      category: 'Select A Category',
-      notes: ''
+      category: 'DEFAULT',
+      notes: '',
+      update: false
     };
     _this.fileRef = React.createRef();
     _this.store = new _pouchdbBrowser["default"]('recipes');
@@ -91,7 +93,37 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
   (0, _createClass2["default"])(ModalForm, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      var _this2 = this;
+
       _mousetrap["default"].bind('esc', this.exit, 'keyup');
+
+      _electron.ipcRenderer.on('recipe-edit', function (e, doc) {
+        var newState = {
+          _id: doc._id,
+          _rev: doc._rev,
+          title: doc.title,
+          serves: doc.serves,
+          prepTime: doc.prepTime,
+          cookTime: doc.cookTime,
+          directions: doc.directions,
+          dirTextVal: doc.directions.join(', '),
+          ingredients: doc.ingredients,
+          category: doc.category,
+          notes: doc.notes,
+          update: true,
+          ingrTextVal: doc.ingredients.reduce(function (acc, curr) {
+            acc.push("".concat(curr.quantity).concat(curr.unit, " ").concat(curr.label));
+            return acc;
+          }, []).join(', ')
+        };
+
+        _this2.store.getAttachment(doc._id, 'img').then(function (res) {
+          console.log(res);
+          newState.img = res;
+
+          _this2.setState(newState);
+        })["catch"](console.log);
+      });
     }
   }, {
     key: "parseDuration",
@@ -141,9 +173,8 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "submit",
     value: function submit() {
-      var _this2 = this;
+      var _this3 = this;
 
-      console.log(this.state.img);
       var recipe = {
         _id: this.state._id,
         _attachments: {
@@ -161,8 +192,13 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         category: this.state.category,
         notes: this.state.notes
       };
-      this.store.put(recipe).then(function (doc) {
-        _this2.setState({
+
+      if (this.state.update) {
+        recipe._rev = this.state._rev;
+      }
+
+      this.store.put(recipe).then(function () {
+        _this3.setState({
           title: '',
           img: null,
           serves: '',
@@ -178,21 +214,22 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
           },
           directions: [],
           ingredients: [],
-          category: 'Select A Category',
-          notes: ''
+          category: 'DEFAULT',
+          notes: '',
+          update: false
         });
 
-        _this2.fileRef.current.value = '';
+        _this3.fileRef.current.value = '';
 
         _electron.ipcRenderer.send('db-refresh-request');
 
-        _this2.exit();
+        _this3.exit();
       })["catch"](console.log);
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
         className: "toolbar-actions"
@@ -221,7 +258,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "form-control",
         value: this.state.title,
         onChange: function onChange(e) {
-          _this3.setState({
+          _this4.setState({
             title: e.target.value
           });
         }
@@ -239,7 +276,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         accept: "image/*",
         ref: this.fileRef,
         onChange: function onChange(e) {
-          _this3.setState({
+          _this4.setState({
             img: e.target.files[0]
           });
         }
@@ -255,7 +292,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         min: 1,
         value: this.state.serves,
         onChange: function onChange(e) {
-          return _this3.setState({
+          return _this4.setState({
             serves: e.target.value
           });
         }
@@ -274,8 +311,8 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         min: 1,
         value: this.state.prepTime.label,
         onChange: function onChange(e) {
-          _this3.setState({
-            prepTime: _this3.parseDuration(e.target.value)
+          _this4.setState({
+            prepTime: _this4.parseDuration(e.target.value)
           });
         }
       }))), /*#__PURE__*/React.createElement("div", {
@@ -291,8 +328,8 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         min: 1,
         value: this.state.cookTime.label,
         onChange: function onChange(e) {
-          _this3.setState({
-            cookTime: _this3.parseDuration(e.target.value)
+          _this4.setState({
+            cookTime: _this4.parseDuration(e.target.value)
           });
         }
       })))), /*#__PURE__*/React.createElement("div", {
@@ -305,9 +342,9 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         className: "input-group-area"
       }, /*#__PURE__*/React.createElement("select", {
         className: "form-control",
-        defaultValue: "DEFAULT",
+        value: this.state.category,
         onChange: function onChange(e) {
-          return _this3.setState({
+          return _this4.setState({
             category: e.target.value
           });
         }
@@ -328,7 +365,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         value: this.state.ingrTextVal,
         placeholder: "Separate each ingredient with a comma",
         onChange: function onChange(e) {
-          return _this3.parseIngredient(e.target.value);
+          return _this4.parseIngredient(e.target.value);
         }
       })), /*#__PURE__*/React.createElement("div", {
         className: "form-group"
@@ -341,7 +378,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
             return s.trim();
           });
 
-          _this3.setState({
+          _this4.setState({
             directions: result,
             dirTextVal: e.target.value
           });
@@ -353,7 +390,7 @@ var ModalForm = /*#__PURE__*/function (_React$Component) {
         rows: 1,
         value: this.state.notes,
         onChange: function onChange(e) {
-          return _this3.setState({
+          return _this4.setState({
             notes: e.target.value
           });
         }

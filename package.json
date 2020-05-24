@@ -106,5 +106,10 @@
 				}
 			]
 		}
+	},
+	"dependencies": {
+		"dialogs": "^2.0.1",
+		"react-infinite-scroll-component": "^5.0.4",
+		"smalltalk": "^4.0.6"
 	}
 }

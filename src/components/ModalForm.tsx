@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { remote, ipcRenderer } from 'electron';
+import { remote, ipcRenderer, Dock } from 'electron';
 import { IconContext } from 'react-icons';
 import { MdClear } from 'react-icons/md';
 import { BsCardImage } from 'react-icons/bs';
@@ -20,6 +20,7 @@ export default class ModalForm extends React.Component<any, any> {
     super(props);
     this.state = {
       _id: intformat(generator.next(), 'hex'),
+      _rev: '',
       title: '',
       img: '',
       serves: '',
@@ -29,8 +30,9 @@ export default class ModalForm extends React.Component<any, any> {
       dirTextVal: '',
       ingredients: [],
       ingrTextVal: '',
-      category: 'Select A Category',
-      notes: ''
+      category: 'DEFAULT',
+      notes: '',
+      update: false
     }
     this.fileRef = React.createRef();
     this.store = new PouchDB('recipes');
@@ -42,6 +44,31 @@ export default class ModalForm extends React.Component<any, any> {
 
   componentDidMount() {
     Mousetrap.bind('esc', this.exit, 'keyup');
+    ipcRenderer.on('recipe-edit', (e: any, doc: any) => {
+      let newState: object = {
+        _id: doc._id,
+        _rev: doc._rev,
+        title: doc.title,
+        serves: doc.serves,
+        prepTime: doc.prepTime,
+        cookTime: doc.cookTime,
+        directions: doc.directions,
+        dirTextVal: doc.directions.join(', '),
+        ingredients: doc.ingredients,
+        category: doc.category,
+        notes: doc.notes,
+        update: true,
+        ingrTextVal: doc.ingredients.reduce((acc: any, curr: any,) => {
+          acc.push(`${curr.quantity}${curr.unit} ${curr.label}`);
+          return acc;
+        }, []).join(', ')
+      };
+      this.store.getAttachment(doc._id, 'img').then((res: any) => {
+        console.log(res);
+        newState.img = res;
+        this.setState(newState);
+      }).catch(console.log);
+    });
   }
 
   parseDuration(duration: string) {
@@ -76,8 +103,6 @@ export default class ModalForm extends React.Component<any, any> {
   }
 
   submit() {
-    console.log(this.state.img);
-
     let recipe: any = {
       _id: this.state._id,
       _attachments: {
@@ -95,7 +120,11 @@ export default class ModalForm extends React.Component<any, any> {
       category: this.state.category,
       notes: this.state.notes
     }
-    this.store.put(recipe).then((doc: any) => {
+
+    if (this.state.update) {
+      recipe._rev = this.state._rev;
+    }
+    this.store.put(recipe).then(() => {
       this.setState({
         title: '',
         img: null,
@@ -104,14 +133,14 @@ export default class ModalForm extends React.Component<any, any> {
         cookTime: { hours: 0, mins: 0, label: ""},
         directions: [],
         ingredients: [],
-        category: 'Select A Category',
-        notes: ''
+        category: 'DEFAULT',
+        notes: '',
+        update: false
       });
       this.fileRef.current.value = '';
       ipcRenderer.send('db-refresh-request');
       this.exit(); 
     }).catch(console.log);
-    
   }
 
 
@@ -198,7 +227,7 @@ export default class ModalForm extends React.Component<any, any> {
                   Category
                 </div>
                 <div className="input-group-area">
-                  <select className="form-control" defaultValue="DEFAULT"
+                  <select className="form-control" value={this.state.category}
                     onChange={(e: any) => this.setState({ category: e.target.value })}>
                     <option value="DEFAULT" disabled>Select A Category</option>
                     {
