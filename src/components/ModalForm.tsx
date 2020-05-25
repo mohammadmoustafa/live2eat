@@ -64,7 +64,6 @@ export default class ModalForm extends React.Component<any, any> {
         }, []).join(', ')
       };
       this.store.getAttachment(doc._id, 'img').then((res: any) => {
-        console.log(res);
         newState.img = res;
         this.setState(newState);
       }).catch(console.log);

@@ -37,13 +37,11 @@ class RecipesView extends React.Component<any, any> {
   }
 
   loadRecipes() {
-    console.log('load recipes running.')
     this.store.allDocs({
       include_docs: true,
       attachments: true,
       binary: true,
     }).then((docs: any) => {
-      console.log(docs.rows);
       this.setState({ recipes: docs.rows, display: docs.rows });
     }).catch(console.log);
   }
@@ -134,6 +132,38 @@ class RecipesView extends React.Component<any, any> {
         </React.Fragment>
       );
     } else {
+
+      let formattedRecipes = this.state.display.map((row: any) => {
+        return (
+          <li className="list-group-item" key={row.doc._id}>
+            <img className="img-rounded media-object thumb pull-right"
+              src={URL.createObjectURL(row.doc._attachments.img.data)}
+              width="192" height="128" />
+            <div className="media-body">
+              <h3>{row.doc.title}</h3>
+              <h5>Prep Time: {row.doc.prepTime.label}</h5>
+              <h5>Cook Time: {row.doc.cookTime.label}</h5>
+            </div>
+            <x-contextmenu>
+              <x-menu>
+                <x-menuitem disabled>
+                  <x-icon name="visibility"></x-icon>
+                  <x-label>View</x-label>
+                </x-menuitem>
+                <x-menuitem onClick={() => this.edit(row.doc)}>
+                  <x-icon name="create"></x-icon>
+                  <x-label>Edit</x-label>
+                </x-menuitem>
+                <hr />
+                <x-menuitem onClick={() => this.delete(row.doc._id, row.doc._rev)}>
+                  <x-icon name="delete"></x-icon>
+                  <x-label>Delete '{row.doc.title}'</x-label>
+                </x-menuitem>
+              </x-menu>
+            </x-contextmenu>
+          </li>
+        )
+      }) ;
       return (
         <React.Fragment>
           <ul className="list-group">
@@ -168,37 +198,7 @@ class RecipesView extends React.Component<any, any> {
                   The end.
                 </p>
               }>
-              { this.state.display.map((row: any) => {
-                return (
-                  <li className="list-group-item" key={row.doc._id}>
-                    <img className="img-rounded media-object thumb pull-right"
-                      src={URL.createObjectURL(row.doc._attachments.img.data)}
-                      width="192" height="128" />
-                    <div className="media-body">
-                      <h3>{row.doc.title}</h3>
-                      <h5>Prep Time: {row.doc.prepTime.label}</h5>
-                      <h5>Cook Time: {row.doc.cookTime.label}</h5>
-                    </div>
-                    <x-contextmenu>
-                      <x-menu>
-                        <x-menuitem disabled>
-                          <x-icon name="visibility"></x-icon>
-                          <x-label>View</x-label>
-                        </x-menuitem>
-                        <x-menuitem onClick={() => this.edit(row.doc)}>
-                          <x-icon name="create"></x-icon>
-                          <x-label>Edit</x-label>
-                        </x-menuitem>
-                        <hr />
-                        <x-menuitem onClick={() => this.delete(row.doc._id, row.doc._rev)}>
-                          <x-icon name="delete"></x-icon>
-                          <x-label>Delete '{row.doc.title}'</x-label>
-                        </x-menuitem>
-                      </x-menu>
-                    </x-contextmenu>
-                  </li>
-                )
-              }) }
+              { formattedRecipes }
             </InfiniteScroll>
 
               
