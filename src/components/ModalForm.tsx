@@ -124,19 +124,6 @@ export default class ModalForm extends React.Component<any, any> {
       recipe._rev = this.state._rev;
     }
     this.store.put(recipe).then(() => {
-      this.setState({
-        title: '',
-        img: null,
-        serves: '',
-        prepTime: { hours: 0, mins: 0, label: ""},
-        cookTime: { hours: 0, mins: 0, label: ""},
-        directions: [],
-        ingredients: [],
-        category: 'DEFAULT',
-        notes: '',
-        update: false
-      });
-      this.fileRef.current.value = '';
       ipcRenderer.send('db-refresh-request');
       this.exit(); 
     }).catch(console.log);

@@ -7,6 +7,7 @@ import { DBContext } from '../js/db-context';
 import { ipcRenderer } from 'electron';
 import PouchDB from 'pouchdb-browser';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Link, Redirect } from 'react-router-dom';
 
 const logger = require('electron-timber');
 const { remote } = require('electron');
@@ -56,6 +57,10 @@ class RecipesView extends React.Component<any, any> {
     });
   }
 
+  componentWillUnmount() {
+    firstLoad = false;
+  }
+
   search(query: string) {
     this.setState({
       query: query,
@@ -99,8 +104,15 @@ class RecipesView extends React.Component<any, any> {
     });
   }
 
-  handleClick() {
-    logger.log('Add recipe button has been clicked');
+  handleClick(e: any, doc: any) {
+    if (e.nativeEvent.which === 1) {
+      this.props.history.push({
+        pathname: "/view_recipe",
+        state: {
+          recipe: doc
+        }
+      });
+    }
   }
 
   render() {
@@ -133,35 +145,39 @@ class RecipesView extends React.Component<any, any> {
       );
     } else {
 
-      let formattedRecipes = this.state.display.map((row: any) => {
+      let formattedRecipes = this.state.display.map((row: any, i: number) => {
         return (
-          <li className="list-group-item" key={row.doc._id}>
-            <img className="img-rounded media-object thumb pull-right"
-              src={URL.createObjectURL(row.doc._attachments.img.data)}
-              width="192" height="128" />
-            <div className="media-body">
-              <h3>{row.doc.title}</h3>
-              <h5>Prep Time: {row.doc.prepTime.label}</h5>
-              <h5>Cook Time: {row.doc.cookTime.label}</h5>
-            </div>
-            <x-contextmenu>
-              <x-menu>
-                <x-menuitem disabled>
-                  <x-icon name="visibility"></x-icon>
-                  <x-label>View</x-label>
-                </x-menuitem>
-                <x-menuitem onClick={() => this.edit(row.doc)}>
-                  <x-icon name="create"></x-icon>
-                  <x-label>Edit</x-label>
-                </x-menuitem>
-                <hr />
-                <x-menuitem onClick={() => this.delete(row.doc._id, row.doc._rev)}>
-                  <x-icon name="delete"></x-icon>
-                  <x-label>Delete '{row.doc.title}'</x-label>
-                </x-menuitem>
-              </x-menu>
-            </x-contextmenu>
-          </li>
+            <li className="list-group-item" key={row.doc._id}
+              onDoubleClick={(e: any) => this.handleClick(e, row.doc)} >
+                <img className="img-rounded media-object thumb pull-right"
+                  src={URL.createObjectURL(row.doc._attachments.img.data)}
+                  width="192" height="128" />
+                <div className="media-body">
+                  <h3>{row.doc.title}</h3>
+                  <h5>Prep Time: {row.doc.prepTime.label}</h5>
+                  <h5>Cook Time: {row.doc.cookTime.label}</h5>
+                </div>
+                <x-contextmenu>
+                  <x-menu>
+                    <x-menuitem>
+                      <x-icon name="visibility"></x-icon>
+                      <x-label>View</x-label>
+                    </x-menuitem>
+                    <x-menuitem onClick={() => this.edit(row.doc)}>
+                      <x-icon name="create"></x-icon>
+                      <x-label>Edit</x-label>
+                    </x-menuitem>
+                    <hr />
+                    <x-menuitem onClick={() => this.delete(row.doc._id, row.doc._rev)}>
+                      <x-icon name="delete"></x-icon>
+                      <x-label>Delete '{row.doc.title}'</x-label>
+                    </x-menuitem>
+                  </x-menu>
+                </x-contextmenu>
+            </li>
+            
+            
+
         )
       }) ;
       return (

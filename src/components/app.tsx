@@ -3,6 +3,7 @@ import React from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import RecipesView from './RecipesView';
+import Recipe from './Recipe';
 const { remote } = require('electron');
 const isDark = remote.nativeTheme.shouldUseDarkColors;
 const logger = require('electron-timber');
@@ -21,9 +22,8 @@ export default class App extends React.Component<any> {
         </div>
         <div className="pane">
           <Switch>
-            <Route path="/recipes">
-              <RecipesView />
-            </Route>
+            <Route path="/recipes" component={RecipesView} />
+            <Route path="/view_recipe" component={Recipe} />
             <Route path="/dashboard">
               <header className="body">
                 <h1 className="body">Live To Eat</h1>
