@@ -6,7 +6,6 @@ import { MdAdd } from 'react-icons/md';
 import { DBContext } from '../js/db-context';
 import { ipcRenderer } from 'electron';
 import PouchDB from 'pouchdb-browser';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, Redirect } from 'react-router-dom';
 
 const logger = require('electron-timber');
@@ -52,13 +51,15 @@ class RecipesView extends React.Component<any, any> {
       firstLoad = false;
       this.loadRecipes();
     }
-    ipcRenderer.on('db-refresh', (e: any, arg: any) => {
+    ipcRenderer.on('db-refresh', () => {
       this.loadRecipes();
     });
   }
 
   componentWillUnmount() {
     firstLoad = false;
+    console.log("ReviewsView is unmounting");
+
   }
 
   search(query: string) {
@@ -104,15 +105,10 @@ class RecipesView extends React.Component<any, any> {
     });
   }
 
-  handleClick(e: any, doc: any) {
-    if (e.nativeEvent.which === 1) {
-      this.props.history.push({
-        pathname: "/view_recipe",
-        state: {
-          recipe: doc
-        }
-      });
-    }
+  handleClick(doc: any) {
+    this.props.history.push({
+      pathname: `/view_recipe/${doc._id}`,
+    });
   }
 
   render() {
@@ -148,7 +144,7 @@ class RecipesView extends React.Component<any, any> {
       let formattedRecipes = this.state.display.map((row: any, i: number) => {
         return (
             <li className="list-group-item" key={row.doc._id}
-              onDoubleClick={(e: any) => this.handleClick(e, row.doc)} >
+              onDoubleClick={() => this.handleClick(row.doc)} >
                 <img className="img-rounded media-object thumb pull-right"
                   src={URL.createObjectURL(row.doc._attachments.img.data)}
                   width="192" height="128" />
@@ -175,9 +171,6 @@ class RecipesView extends React.Component<any, any> {
                   </x-menu>
                 </x-contextmenu>
             </li>
-            
-            
-
         )
       }) ;
       return (
@@ -196,7 +189,7 @@ class RecipesView extends React.Component<any, any> {
                 </x-label>
                 <x-menu>
                   <x-menuitem>
-                    <x-label onClick={this.showModal}>Add new recipe</x-label>
+                    <x-label onClick={() => this.showModal()}>Add new recipe</x-label>
                   </x-menuitem>
                   <x-menuitem disabled>
                     <x-label>Import from URL</x-label>
@@ -206,18 +199,18 @@ class RecipesView extends React.Component<any, any> {
               </div>
             </li>
 
-            <InfiniteScroll
-              dataLength={this.state.display.length}
-              loader={<x-throbber></x-throbber>}
-              endMessage={
-                <p style={{textAlign: 'center', opacity: '0.7'}}>
-                  The end.
-                </p>
-              }>
-              { formattedRecipes }
-            </InfiniteScroll>
+            { formattedRecipes }
 
-              
+            <li className="list-group-item"
+            style={{
+              fontWeight: 200,
+              opacity: 0.7,
+              textAlign: 'center'
+            }}>
+              End of recipes.
+            </li>
+
+
               {/* <li className="list-group-item">
                 <img className="img-circle media-object pull-left" src="" width="64" height="64" />
                 <div className="media-body">

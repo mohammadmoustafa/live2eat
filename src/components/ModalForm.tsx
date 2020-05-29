@@ -125,7 +125,7 @@ export default class ModalForm extends React.Component<any, any> {
     }
     this.store.put(recipe).then(() => {
       ipcRenderer.send('db-refresh-request');
-      this.exit(); 
+      this.exit();
     }).catch(console.log);
   }
 
@@ -246,7 +246,7 @@ export default class ModalForm extends React.Component<any, any> {
                   }} />
               </div>
             </div>
-            
+
             <div className="form-group">
               <label>Notes</label>
               <textarea className="form-control" rows={1}

@@ -9,7 +9,7 @@ const isDark = remote.nativeTheme.shouldUseDarkColors;
 const logger = require('electron-timber');
 
 export default class App extends React.Component<any> {
-  
+
   constructor(props: any) {
     super(props);
   }
@@ -23,7 +23,7 @@ export default class App extends React.Component<any> {
         <div className="pane">
           <Switch>
             <Route path="/recipes" component={RecipesView} />
-            <Route path="/view_recipe" component={Recipe} />
+            <Route path="/view_recipe/:id" component={Recipe} />
             <Route path="/dashboard">
               <header className="body">
                 <h1 className="body">Live To Eat</h1>

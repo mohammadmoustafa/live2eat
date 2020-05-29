@@ -79,8 +79,7 @@
 	"build": {
 		"appId": "com.mohammadmoustafa.live2eat",
 		"directories": {
-			"app": "dist",
-			"output": "pack"
+			"app": "dist"
 		},
 		"extends": null,
 		"files": [
