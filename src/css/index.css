@@ -81,6 +81,13 @@ header h3.body {
 	opacity: 0.7;
 }
 
+h4 {
+  font-size: min(max(10px, 4vw), 22px);
+	margin: 0;
+	padding: 0;
+	opacity: 0.7;
+}
+
 .thumb {
   object-fit: cover;
 }
@@ -110,7 +117,8 @@ header h3.body {
 }
 
 .col {
-	flex: 1;
+	display: flex;
+  flex-flow: column;
 }
 
 .center {
@@ -183,7 +191,7 @@ header h3.body {
   /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
 
   /* Set a specific height */
-  height: 50%;
+  height: 45%;
 
   /* Position and center the image to scale nicely on all screens */
   background-position: center;
@@ -198,4 +206,34 @@ header h3.body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+ul.ul-no-style {
+  list-style: none;
+}
+
+#recipe-ingredients {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#recipe-ingredients, #recipe-directions {
+  opacity: 0.9;
+  /* font-size: min(max(10px, 4vw), 22px); */
+  font-size: 1rem;
+  flex: 1;
+}
+
+#recipe-meta {
+    justify-content: space-around;
+    padding: 8px 0;
+}
+
+#recipe-meta, #recipe-notes > p {
+  font-size: 1rem;
+  opacity: 0.9
+}
+
+#recipe-notes {
+  padding: 8px;
+  margin-bottom: 8px;
 }

@@ -58,7 +58,6 @@ class RecipesView extends React.Component<any, any> {
 
   componentWillUnmount() {
     firstLoad = false;
-    console.log("ReviewsView is unmounting");
 
   }
 

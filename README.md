@@ -1,6 +1,8 @@
-# Live To Eat ![build](https://github.com/mohammadmoustafa/live2eat/workflows/build/badge.svg)
+# Live To Eat
 
 > A app for storing your favourite recipes and conveniently changing portion sizes on the fly.
+
+![Screenshot of a recipe](src/assets/recipe_screenshot.png)
 
 **README still needs updating, not currently accurate**
 
