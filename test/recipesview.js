@@ -23,6 +23,6 @@ describe('Recipes page', function() {
   it('initially contains no recipes', function() {
     return this.app.client.$$('.list-group-item').then(function(contents) {
       assert.equal(contents, 0);
-    });
+    }).catch(console.log);
   });
 });

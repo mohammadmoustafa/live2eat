@@ -23,25 +23,25 @@ describe('Application launch', function () {
   it('shows an initial window', function () {
     return this.app.client.getWindowCount().then(function (count) {
       assert.equal(count, 1)
-    })
+    }).catch(console.log);
   });
 
   it('has correct title', function() {
     return this.app.client.waitUntilWindowLoaded().getTitle().then(function (title) {
       assert.equal(title, 'Live To Eat');
-    });
+    }).catch(console.log);
   });
 
   it('dev tools not open', function() {
     return this.app.client.waitUntilWindowLoaded()
       .browserWindow.isDevToolsOpened().then(function(devTools) {
         assert.equal(devTools, false);
-      })
+      }).catch(console.log);
   });
 
   it('loads correct elements on dashboard', function() {
     return this.app.client.$$('.body').then(function(contents) {
       assert.equal(contents.length, 3);
-    });
+    }).catch(console.log);
   });
 })
