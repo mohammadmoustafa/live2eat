@@ -1,4 +1,3 @@
-require('module-alias/register');
 import React from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Sidebar from './Sidebar';
@@ -6,7 +5,6 @@ import RecipesView from './RecipesView';
 import Recipe from './Recipe';
 const { remote } = require('electron');
 const isDark = remote.nativeTheme.shouldUseDarkColors;
-const logger = require('electron-timber');
 
 export default class App extends React.Component<any> {
 

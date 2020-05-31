@@ -8,7 +8,6 @@ import { ipcRenderer } from 'electron';
 import PouchDB from 'pouchdb-browser';
 import { Link, Redirect } from 'react-router-dom';
 
-const logger = require('electron-timber');
 const { remote } = require('electron');
 const url = require('url');
 const Dialogs = require('dialogs');

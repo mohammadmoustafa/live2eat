@@ -3,20 +3,17 @@ import {
 	app,
 	BrowserWindow,
 	Menu,
-	ipcMain as ipc, 
+	ipcMain as ipc,
 	nativeTheme,
 	ipcMain
 } from 'electron';
 import PouchDB from 'pouchdb';
 
 const path = require('path');
-const {is} = require('electron-util');
 const unhandled = require('electron-unhandled');
-const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
 const menu = require('./js/menu.js');
 const isDev = require('electron-is-dev');
-const logger = require('electron-timber');
 const url = require('url');
 var Mousetrap = require('mousetrap');
 
@@ -27,7 +24,6 @@ global.DARK_MODE = isDark && USER_DARK;
 
 
 unhandled();
-// if (isDev) debug();
 contextMenu();
 
 // Note: Must match `build.appId` in package.json

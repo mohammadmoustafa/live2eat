@@ -5,7 +5,6 @@ import RECIPE_SCHEMA from '../assets/recipeSchema.json';
 import App from '../components/app';
 import { DBContext } from './db-context';
 const isDev = require('electron-is-dev');
-const leveldown = require('leveldown');
 
 
 window.onload = () => {
