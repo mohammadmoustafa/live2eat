@@ -1,4 +1,4 @@
-# Live To Eat [![Coverage Status](https://coveralls.io/repos/github/mohammadmoustafa/live2eat/badge.svg?branch=master)](https://coveralls.io/github/mohammadmoustafa/live2eat?branch=master)
+# Live To Eat [![Build Status](https://travis-ci.com/mohammadmoustafa/live2eat.svg?branch=master)](https://travis-ci.com/mohammadmoustafa/live2eat) [![Coverage Status](https://coveralls.io/repos/github/mohammadmoustafa/live2eat/badge.svg?branch=master)](https://coveralls.io/github/mohammadmoustafa/live2eat?branch=master)
 
 > A app for storing your favourite recipes and conveniently changing portion sizes on the fly.
 
