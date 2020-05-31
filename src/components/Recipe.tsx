@@ -36,7 +36,6 @@ export default class Recipe extends React.Component<any, any> {
   }
 
   render() {
-    console.log(this.state.recipe)
     if (this.state.recipe) {
       return (
         <React.Fragment>

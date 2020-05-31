@@ -124,7 +124,7 @@ class RecipesView extends React.Component<any, any> {
                 </x-label>
                 <x-menu>
                   <x-menuitem>
-                    <x-label onClick={this.showModal}>Add new recipe</x-label>
+                    <x-label onClick={() => this.showModal()}>Add new recipe</x-label>
                   </x-menuitem>
                   <x-menuitem disabled>
                     <x-label>Import from URL</x-label>
@@ -154,7 +154,7 @@ class RecipesView extends React.Component<any, any> {
                 </div>
                 <x-contextmenu>
                   <x-menu>
-                    <x-menuitem>
+                    <x-menuitem onClick={() => this.handleClick(row.doc)}>
                       <x-icon name="visibility"></x-icon>
                       <x-label>View</x-label>
                     </x-menuitem>
