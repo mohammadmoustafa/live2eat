@@ -2,8 +2,14 @@ language: node_js
 node_js: '12'
 os: osx
 
-before_script:
-  - npm install
+addons:
+  homebrew:
+    packages:
+      - xvfb
+
+install:
+  - export DISPLAY=':99.0'
+  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
 script:
   - npm test
