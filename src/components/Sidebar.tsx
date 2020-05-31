@@ -13,7 +13,7 @@ export default class Nav extends React.Component {
           <span className="icon icon-home"></span>
           Dashboard
         </NavLink>
-        <NavLink to="/recipes" className="nav-group-item">
+        <NavLink to="/recipes" className="nav-group-item" id="nav-recipes">
           <span className="icon icon-book-open"></span>
           Recipes
         </NavLink>

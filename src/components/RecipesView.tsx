@@ -173,7 +173,7 @@ class RecipesView extends React.Component<any, any> {
       }) ;
       return (
         <React.Fragment>
-          <ul className="list-group">
+          <ul className="list-group" id="recipes-group">
             <li className="list-group-header">
               <div className="row">
               <input className="form-control" type="text" placeholder="Search for a recipe"
