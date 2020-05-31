@@ -1,16 +1,14 @@
 language: node_js
 node_js: '12'
-os: linux
+os: osx
+osx_image: xcode10.2
 
-services:
-   - xvfb
+before_install:
+  - npm install
 
 install:
   - export DISPLAY=':99.0'
   - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
-before_script:
-  - npm install
 
 script:
   - npm test
