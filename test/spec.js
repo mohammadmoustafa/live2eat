@@ -4,20 +4,34 @@ const electronPath = require('electron') // Require Electron from the binaries i
 const path = require('path')
 
 describe('Application launch', function () {
+  this.timeout(10000)
 
-
-  before(function (done) {
-    this.timeout(25000);
+  beforeEach(function () {
     this.app = new Application({
-      path: electronPath.app.getPath('exe'),
+      // Your electron path can be any binary
+      // i.e for OSX an example path could be '/Applications/MyApp.app/Contents/MacOS/MyApp'
+      // But for the sake of the example we fetch it from our node_modules.
+      path: electronPath,
+
+      // Assuming you have the following directory structure
+
+      //  |__ my project
+      //     |__ ...
+      //     |__ main.js
+      //     |__ package.json
+      //     |__ index.html
+      //     |__ ...
+      //     |__ test
+      //        |__ spec.js  <- You are here! ~ Well you should be.
+
+      // The following line tells spectron to look and use the main.js file
+      // and the package.json located 1 level above.
       args: [path.join(__dirname, '..')]
-    });
-    this.app.start().then(() => {
-      done();
     })
+    return this.app.start()
   })
 
-  after(function () {
+  afterEach(function () {
     if (this.app && this.app.isRunning()) {
       return this.app.stop()
     }
@@ -26,25 +40,8 @@ describe('Application launch', function () {
   it('shows an initial window', function () {
     return this.app.client.getWindowCount().then(function (count) {
       assert.equal(count, 1)
-    }).catch(console.log);
-  });
-
-  it('has correct title', function() {
-    return this.app.client.waitUntilWindowLoaded().getTitle().then(function (title) {
-      assert.equal(title, 'Live To Eat');
-    }).catch(console.log);
-  });
-
-  it('dev tools not open', function() {
-    return this.app.client.waitUntilWindowLoaded()
-      .browserWindow.isDevToolsOpened().then(function(devTools) {
-        assert.equal(devTools, false);
-      }).catch(console.log);
-  });
-
-  it('loads correct elements on dashboard', function() {
-    return this.app.client.$$('.body').then(function(contents) {
-      assert.equal(contents.length, 3);
-    }).catch(console.log);
-  });
+      // Please note that getWindowCount() will return 2 if `dev tools` are opened.
+      // assert.equal(count, 2)
+    })
+  })
 })
