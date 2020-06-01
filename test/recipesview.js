@@ -8,7 +8,7 @@ describe('Recipes page', function() {
 
   beforeEach(function() {
     this.app = new Application({
-      path: electronPath,
+      path: electronPath.app.getPath('exe'),
       args: [path.join(__dirname, '..')]
     });
     return this.app.start();
