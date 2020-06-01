@@ -1,5 +1,5 @@
 # Live To Eat
-![Build Status](https://github.com/mohammadmoustafa/live2eat/workflows/Node.js%20CI/badge.svg)
+![build](https://github.com/mohammadmoustafa/live2eat/workflows/build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/mohammadmoustafa/live2eat/badge.svg?branch=master)](https://coveralls.io/github/mohammadmoustafa/live2eat?branch=master)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mohammadmoustafa/live2eat?label=version)
 ![GitHub](https://img.shields.io/github/license/mohammadmoustafa/live2eat)
