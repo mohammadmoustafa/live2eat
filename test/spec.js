@@ -4,14 +4,19 @@ const electronPath = require('electron') // Require Electron from the binaries i
 const path = require('path')
 
 describe('Application launch', function () {
-  this.timeout(60000)
+  this.timeout(25000)
 
   before(function () {
-    this.app = new Application({
-      path: electronPath.app.getPath('exe'),
-      args: [path.join(__dirname, '..')]
-    })
-    return this.app.start()
+    try {
+      this.app = new Application({
+        path: electronPath.app.getPath('exe'),
+        args: [path.join(__dirname, '..')]
+      })
+      return this.app.start()
+    } catch (e) {
+      console.log(e);
+    }
+
   })
 
   after(function () {
