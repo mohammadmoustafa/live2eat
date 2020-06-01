@@ -5,15 +5,13 @@ const path = require('path')
 
 describe('Recipes page', function() {
 
-  before(function(done) {
+  before(function() {
     this.timeout(25000);
     this.app = new Application({
-      path: electronPath.app.getPath('exe'),
+      path: electronPath,
       args: [path.join(__dirname, '..')]
     });
-    this.app.start().then(() => {
-      done();
-    });
+    return this.app.start();
   });
 
   after(function() {
