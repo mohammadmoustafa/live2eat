@@ -1,17 +1,18 @@
 import React from 'react';
-import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
+import {HashRouter, Route, Switch, Redirect} from 'react-router-dom';
 import Sidebar from './Sidebar';
 import RecipesView from './RecipesView';
 import Recipe from './Recipe';
-const { remote } = require('electron');
+const {remote} = require('electron');
 const isDark = remote.nativeTheme.shouldUseDarkColors;
 
-export default class App extends React.Component<any> {
-
-  constructor(props: any) {
-    super(props);
-  }
-
+/**
+ * @type {React.Component}
+ */
+export default class App extends React.Component {
+  /**
+   * @return {JSX.Element} Returns the HashRouter setup for the App component
+   */
   render() {
     return (
       <HashRouter>
@@ -34,6 +35,6 @@ export default class App extends React.Component<any> {
           </Switch>
         </div>
       </HashRouter>
-    )
+    );
   }
 }

@@ -1,10 +1,9 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 
 const ROUTES = ['/recipes'];
 
 export default class Nav extends React.Component {
-
   render() {
     return (
       <nav className="nav-group">

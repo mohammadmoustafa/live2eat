@@ -1,12 +1,11 @@
 import React from 'react';
-import { IconContext } from 'react-icons';
-import { MdAdd } from 'react-icons/md';
-import { ipcRenderer } from 'electron';
+import {IconContext} from 'react-icons';
+import {MdAdd} from 'react-icons/md';
+import {ipcRenderer} from 'electron';
 import PouchDB from 'pouchdb-browser';
 import ReactMarkdown from 'react-markdown';
 
 export default class Recipe extends React.Component<any, any> {
-
   _id: any;
   db: any;
 
@@ -15,23 +14,23 @@ export default class Recipe extends React.Component<any, any> {
     this.db = new PouchDB('recipes');
     this._id = this.props.match.params.id;
     this.state = {
-      recipe: null
-    }
+      recipe: null,
+    };
     this.timeLabel = this.timeLabel.bind(this);
   }
 
   componentDidMount() {
     this.db.get(this._id, {
       attachments: true,
-      binary: true
+      binary: true,
     }).then((doc: any) => {
-      this.setState({ recipe: doc })
+      this.setState({recipe: doc});
     }).catch(console.log);
   }
 
   timeLabel(time: any) {
-    let hrs = (time.hours > 0) ? `${time.hours} hrs` : '';
-    let mins = (time.mins > 0) ? ((time.mins > 1) ? `${time.mins} mins`: `${time.mins} min`) : '';
+    const hrs = (time.hours > 0) ? `${time.hours} hrs` : '';
+    const mins = (time.mins > 0) ? ((time.mins > 1) ? `${time.mins} mins`: `${time.mins} min`) : '';
     return ([hrs, mins].join(' '));
   }
 
@@ -41,13 +40,13 @@ export default class Recipe extends React.Component<any, any> {
         <React.Fragment>
           <div className="hero-image"
             style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${URL.createObjectURL(this.state.recipe._attachments.img.data)})`
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${URL.createObjectURL(this.state.recipe._attachments.img.data)})`,
             }}>
             <div className="hero-text">
               <h1>{this.state.recipe.title}</h1>
             </div>
           </div>
-          <div className="col" style={{ height: '55%' }}>
+          <div className="col" style={{height: '55%'}}>
             <div className="row" id="recipe-meta">
               <span>Prep Time: {this.timeLabel(this.state.recipe.prepTime)}</span>
               <span>Cook Time: {this.timeLabel(this.state.recipe.cookTime)}</span>
@@ -60,19 +59,19 @@ export default class Recipe extends React.Component<any, any> {
                   Ingredients
                   {
                     this.state.recipe.ingredients.map((item: any, i: number) => {
-                      return ( <li key={i}>{item.quantity} {item.unit} {item.label}</li> )
+                      return ( <li key={i}>{item.quantity} {item.unit} {item.label}</li> );
                     })
                   }
                 </ul>
               </div>
               <div className="col" id="recipe-directions" style={{
-                flexGrow: 2
+                flexGrow: 2,
               }}>
                 <ol className="ul-no-style">
                   Directions
                   {
                     this.state.recipe.directions.map((item: any, i: number) => {
-                      return ( <li key={i}>{item}</li> )
+                      return ( <li key={i}>{item}</li> );
                     })
                   }
                 </ol>
@@ -86,10 +85,10 @@ export default class Recipe extends React.Component<any, any> {
             }
           </div>
         </React.Fragment>
-      )
+      );
     }
     return (
       <x-throbber class="center-noflex" type="spin"></x-throbber>
-    )
+    );
   }
 }
