@@ -3,3 +3,5 @@ yarn.lock
 build/
 pack/
 dist/
+.nyc_output
+coverage/
