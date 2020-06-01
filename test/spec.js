@@ -11,7 +11,7 @@ describe('Application launch', function () {
       // Your electron path can be any binary
       // i.e for OSX an example path could be '/Applications/MyApp.app/Contents/MacOS/MyApp'
       // But for the sake of the example we fetch it from our node_modules.
-      path: electronPath,
+      path: './node_modules/.bin/electron',
 
       // Assuming you have the following directory structure
 
