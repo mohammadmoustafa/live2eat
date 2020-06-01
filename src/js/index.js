@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {remote, ipcRenderer} from 'electron';
-import RECIPE_SCHEMA from '../assets/recipeSchema.json';
+import {remote} from 'electron';
 import App from '../components/app';
-import {DBContext} from './db-context';
 const isDev = require('electron-is-dev');
 
 

@@ -17,7 +17,7 @@
 		"dist": "electron-builder --macos",
 		"release": "np --no-publish",
 		"build": "gulp build",
-		"test": "xo && nyc mocha",
+		"test": "nyc mocha",
 		"coverage": "nyc report --reporter=lcovonly",
     "lint": "eslint",
     "lint:all": "eslint 'src/components/*' 'src/js/*'"

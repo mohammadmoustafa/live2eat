@@ -17,7 +17,8 @@ plugins:
   - react
   - '@typescript-eslint'
 rules: {
-  max-len: ['error', { 'code': 100 }]
+  max-len: ['error', { 'code': 100 }],
+  require-jsdoc: ['off']
 }
 settings:
   react:

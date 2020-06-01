@@ -1,17 +1,15 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faReceipt, faPlus} from '@fortawesome/free-solid-svg-icons';
+import {faReceipt} from '@fortawesome/free-solid-svg-icons';
 import {IconContext} from 'react-icons';
 import {MdAdd} from 'react-icons/md';
 import {DBContext} from '../js/db-context';
 import {ipcRenderer} from 'electron';
 import PouchDB from 'pouchdb-browser';
-import {Link, Redirect} from 'react-router-dom';
 
 const {remote} = require('electron');
 const url = require('url');
-const Dialogs = require('dialogs');
-const dialogs = Dialogs();
+const dialogs = require('dialogs')();
 
 let firstLoad = false;
 
@@ -161,7 +159,7 @@ class RecipesView extends React.Component<any, any> {
                 <hr />
                 <x-menuitem onClick={() => this.delete(row.doc._id, row.doc._rev)}>
                   <x-icon name="delete"></x-icon>
-                  <x-label>Delete '{row.doc.title}'</x-label>
+                  <x-label>Delete &apos;{row.doc.title}&apos;</x-label>
                 </x-menuitem>
               </x-menu>
             </x-contextmenu>

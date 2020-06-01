@@ -1,7 +1,4 @@
 import React from 'react';
-import {IconContext} from 'react-icons';
-import {MdAdd} from 'react-icons/md';
-import {ipcRenderer} from 'electron';
 import PouchDB from 'pouchdb-browser';
 import ReactMarkdown from 'react-markdown';
 
@@ -40,7 +37,8 @@ export default class Recipe extends React.Component<any, any> {
         <React.Fragment>
           <div className="hero-image"
             style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${URL.createObjectURL(this.state.recipe._attachments.img.data)})`,
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+              url(${URL.createObjectURL(this.state.recipe._attachments.img.data)})`,
             }}>
             <div className="hero-text">
               <h1>{this.state.recipe.title}</h1>
