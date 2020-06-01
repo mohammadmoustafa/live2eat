@@ -17,7 +17,7 @@
 		"dist": "electron-builder --macos",
 		"release": "np --no-publish",
 		"build": "gulp build",
-		"test": "electron-mocha"
+		"test": "mocha"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.9.6",
