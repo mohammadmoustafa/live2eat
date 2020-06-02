@@ -3,7 +3,7 @@
 
 name: build
 
-on: [ push, pull_request ]
+on: [ push ]
 
 jobs:
   build:
@@ -25,10 +25,8 @@ jobs:
     - name: Build code
       run: npm run build
     - name: Run test suite and generate coverage info
-      run: npm test
+      run: npm test && npm run lint:all
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Run linter
-      run: npm run lint:all

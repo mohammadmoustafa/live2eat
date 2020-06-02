@@ -4,44 +4,45 @@ const electronPath = require('electron') // Require Electron from the binaries i
 const path = require('path')
 
 describe('Application launch', function () {
-  this.timeout(10000)
 
-  before(function () {
-    this.app = new Application({
+  let app;
+
+  beforeAll(function () {
+    app = new Application({
       path: electronPath,
       args: [path.join(__dirname, '..')]
     })
-    return this.app.start()
+    return app.start()
   })
 
-  after(function () {
-    if (this.app && this.app.isRunning()) {
-      return this.app.stop()
+  afterAll(function () {
+    if (app && app.isRunning()) {
+      return app.stop()
     }
   })
 
-  it('shows an initial window', function () {
-    return this.app.client.getWindowCount().then(function (count) {
-      assert.equal(count, 1)
+  test('shows an initial window', function () {
+    return app.client.getWindowCount().then(function (count) {
+      expect(count).toEqual(1);
     })
   });
 
   it('has correct title', function() {
-    return this.app.client.waitUntilWindowLoaded().getTitle().then(function (title) {
-      assert.equal(title, 'Live To Eat');
+    return app.client.waitUntilWindowLoaded().getTitle().then(function (title) {
+      expect(title).toMatch('Live To Eat');
     });
   });
 
   it('dev tools not open', function() {
-    return this.app.client.waitUntilWindowLoaded()
+    return app.client.waitUntilWindowLoaded()
       .browserWindow.isDevToolsOpened().then(function(devTools) {
-        assert.equal(devTools, false);
+        expect(devTools).toBeFalsy();
       })
   });
 
   it('loads correct elements on dashboard', function() {
-    return this.app.client.$$('.body').then(function(contents) {
-      assert.equal(contents.length, 3);
+    return app.client.$$('.body').then(function(contents) {
+      expect(contents.length).toEqual(3);
     });
   });
 })

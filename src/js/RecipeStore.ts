@@ -3,12 +3,13 @@ import PouchDB from 'pouchdb-browser';
 class RecipeStore {
   db: PouchDB.Database<{}>;
 
-  constructor(memory?: boolean) {
+  /* istanbul ignore next */
+  constructor(memory?: boolean, name?: string) {
     if (memory) {
       PouchDB.plugin(require('pouchdb-adapter-memory'));
-      this.db = new PouchDB('recipes', {adapter: 'memory'});
+      this.db = new PouchDB((name) ? name : 'recipes', {adapter: 'memory'});
     } else {
-      this.db = new PouchDB('recipes');
+      this.db = new PouchDB((name) ? name : 'recipes');
     }
   }
 
@@ -36,7 +37,7 @@ class RecipeStore {
   }
 
   getAttachment(docId: string, attachment: string) {
-    return this.db.getAttachment(docId, attachent);
+    return this.db.getAttachment(docId, attachment);
   }
 
   destroy(): Promise<void> {

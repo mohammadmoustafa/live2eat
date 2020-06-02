@@ -3,18 +3,18 @@ const path = require('path');
 
 describe('Recipe Store', function() {
 
-  before(async function() {
-    this.timeout(25000);
+  let db, recipe1, recipe2;
 
+  beforeAll(async function() {
     if (!globalThis.fetch) {
       globalThis.fetch = require('node-fetch');
       globalThis.Headers = fetch.Headers;
     }
 
     const {RecipeStore} = require('../build/js/RecipeStore');
-    this.db = new RecipeStore(true);
+    db = new RecipeStore(true);
 
-    this.recipe1 = {
+    recipe1 = {
       _id: 'recipe1',
       _attachments: {
         "img": {
@@ -31,7 +31,7 @@ describe('Recipe Store', function() {
       category: "Test",
       notes: ''
     }
-    this.recipe2 = {
+    recipe2 = {
       _id: 'recipe2',
       _attachments: {
         "img": {
@@ -50,24 +50,44 @@ describe('Recipe Store', function() {
     }
   });
 
-  it('insert recipe into database', function() {
-    return this.db.addRecipe(this.recipe1).then(function(res) {
-      assert.equal(res.ok, true);
+  test('insert recipe into database', function() {
+    return db.addRecipe(recipe1).then(function(res) {
+      expect(res.ok).toBeTruthy();
     });
   });
 
-  it('retrieve inserted recipe', function() {
-    return this.db.getRecipe('recipe1').then(function(res) {
-      assert.equal(res.title, 'Recipe 1');
+  test('retrieve inserted recipe', function() {
+    return db.getRecipe('recipe1').then(function(res) {
+      expect(res.title).toMatch('Recipe 1');
     });
   });
 
-  it('insert second recipe & retrieve all recipes', function() {
-    var self = this;
-    return this.db.addRecipe(this.recipe2).then(function() {
-      self.db.getAllRecipes().then(function(doc) {
-        assert.equal(doc.rows.length, 2);
+  test('insert second recipe & retrieve all recipes', function() {
+    return db.addRecipe(recipe2).then(function() {
+      return db.getAllRecipes().then(function(doc) {
+        expect(doc.rows.length).toEqual(2);
       });
-    })
+    });
   });
+
+  test('delete recipe', function() {
+    return db.getRecipe('recipe1').then((doc) => {
+      return db.deleteRecipe(doc._id, doc._rev).then((res) => {
+        expect(res.ok).toBeTruthy();
+      });
+    });
+  });
+
+  test('get stored attachment', function() {
+    return db.getAttachment('recipe2', 'img').then(buf => {
+      expect(Buffer.compare(buf, Buffer.alloc(10))).toEqual(0);
+    });
+  });
+
+  test('destroy db', function() {
+    return db.destroy().then(res => {
+      expect(res.ok).toBeTruthy();
+    });
+  });
+
 });
