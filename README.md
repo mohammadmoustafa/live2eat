@@ -2,7 +2,7 @@
 ![build](https://github.com/mohammadmoustafa/live2eat/workflows/build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/mohammadmoustafa/live2eat/badge.svg?branch=master)](https://coveralls.io/github/mohammadmoustafa/live2eat?branch=master)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/mohammadmoustafa/live2eat?include_prereleases)
-![GitHub](https://img.shields.io/github/license/mohammadmoustafa/live2eat)
+[![GitHub](https://img.shields.io/github/license/mohammadmoustafa/live2eat)](https://github.com/mohammadmoustafa/live2eat/blob/master/LICENSE)
 
 > A app for storing your favourite recipes and conveniently changing portion sizes on the fly.
 
