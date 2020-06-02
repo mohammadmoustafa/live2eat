@@ -110,7 +110,8 @@ class RecipesView extends React.Component<any, any> {
       return (
         <React.Fragment>
           <div className="toolbar-actions">
-            <x-button skin="flat" className="btn btn-transparent"
+            <x-button id="add-recipe-controls"
+              skin="flat" className="btn btn-transparent"
               style={{marginLeft: '4px', paddingTop: '2px', float: 'right'}}>
               <x-label>
                 <IconContext.Provider value={{className: 'icon-md'}}>
@@ -118,8 +119,9 @@ class RecipesView extends React.Component<any, any> {
                 </IconContext.Provider>
               </x-label>
               <x-menu>
-                <x-menuitem>
-                  <x-label onClick={() => this.showModal()}>Add new recipe</x-label>
+                <x-menuitem id="add-recipe-form">
+                  <x-label
+                    onClick={() => this.showModal()}>Add new recipe</x-label>
                 </x-menuitem>
                 <x-menuitem disabled>
                   <x-label>Import from URL</x-label>
@@ -173,7 +175,8 @@ class RecipesView extends React.Component<any, any> {
               <div className="row">
                 <input className="form-control" type="text" placeholder="Search for a recipe"
                   onChange={(e: any) => this.search(e.target.value)}/>
-                <x-button skin="flat" className="btn btn-transparent pull-right"
+                <x-button id="add-recipe-controls"
+                  skin="flat" className="btn btn-transparent pull-right"
                   style={{marginLeft: '4px', paddingTop: '2px', float: 'right'}}>
                   <x-label>
                     <IconContext.Provider value={{className: 'icon-md'}}>
@@ -181,8 +184,9 @@ class RecipesView extends React.Component<any, any> {
                     </IconContext.Provider>
                   </x-label>
                   <x-menu>
-                    <x-menuitem>
-                      <x-label onClick={() => this.showModal()}>Add new recipe</x-label>
+                    <x-menuitem id="add-recipe-form">
+                      <x-label
+                        onClick={() => this.showModal()}>Add new recipe</x-label>
                     </x-menuitem>
                     <x-menuitem disabled>
                       <x-label>Import from URL</x-label>
