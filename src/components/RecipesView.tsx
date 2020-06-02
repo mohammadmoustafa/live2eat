@@ -3,9 +3,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faReceipt} from '@fortawesome/free-solid-svg-icons';
 import {IconContext} from 'react-icons';
 import {MdAdd} from 'react-icons/md';
-import {DBContext} from '../js/db-context';
 import {ipcRenderer} from 'electron';
-import PouchDB from 'pouchdb-browser';
+import {RecipeStore} from '../js/RecipeStore';
 
 const {remote} = require('electron');
 const url = require('url');
@@ -14,7 +13,7 @@ const dialogs = require('dialogs')();
 let firstLoad = false;
 
 class RecipesView extends React.Component<any, any> {
-  store: PouchDB.Database<{}>;
+  store: RecipeStore;
 
   constructor(props: any) {
     super(props);
@@ -23,7 +22,7 @@ class RecipesView extends React.Component<any, any> {
       display: [],
       query: '',
     };
-    this.store = new PouchDB('recipes');
+    this.store = new RecipeStore();
     this.handleClick = this.handleClick.bind(this);
     this.showModal = this.showModal.bind(this);
     this.loadRecipes = this.loadRecipes.bind(this);
@@ -33,11 +32,7 @@ class RecipesView extends React.Component<any, any> {
   }
 
   loadRecipes() {
-    this.store.allDocs({
-      include_docs: true,
-      attachments: true,
-      binary: true,
-    }).then((docs: any) => {
+    this.store.getAllRecipes().then((docs: any) => {
       this.setState({recipes: docs.rows, display: docs.rows});
     }).catch(console.log);
   }
@@ -66,7 +61,7 @@ class RecipesView extends React.Component<any, any> {
   }
 
   edit(doc: any) {
-    this.showModal(doc);
+    this.showModal(doc._id);
   }
 
   showModal(arg?: any) {
@@ -95,7 +90,10 @@ class RecipesView extends React.Component<any, any> {
 
   delete(id: string, rev: string) {
     dialogs.confirm('Are you sure you want to delete this recipe?', (res: any) => {
-      if (res) this.store.remove(id, rev).then(this.loadRecipes).catch(console.log);
+      if (res) {
+        this.store.deleteRecipe(id, rev)
+            .then(this.loadRecipes).catch(console.log);
+      }
     });
   }
 
@@ -221,5 +219,4 @@ class RecipesView extends React.Component<any, any> {
     }
   }
 }
-RecipesView.contextType = DBContext;
 export default RecipesView;

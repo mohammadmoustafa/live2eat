@@ -1,4 +1,6 @@
 'use strict';
+require('node-fetch');
+
 import {
   app,
   BrowserWindow,
