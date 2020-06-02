@@ -2,6 +2,8 @@ const Application = require('spectron').Application
 const assert = require('assert')
 const electronPath = require('electron') // Require Electron from the binaries included in node_modules.
 const path = require('path')
+const PouchDB = require('pouchdb-browser');
+global.fetch = require('node-fetch');
 
 describe('Recipes page', function() {
 
