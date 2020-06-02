@@ -90,8 +90,10 @@ class RecipesView extends React.Component<any, any> {
 
   delete(id: string, rev: string) {
     dialogs.confirm('Are you sure you want to delete this recipe?', (res: any) => {
-      if (res) this.store.deleteRecipe(id, rev)
-        .then(this.loadRecipes).catch(console.log);
+      if (res) {
+        this.store.deleteRecipe(id, rev)
+            .then(this.loadRecipes).catch(console.log);
+      }
     });
   }
 

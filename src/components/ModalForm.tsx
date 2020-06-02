@@ -65,7 +65,7 @@ export default class ModalForm extends React.Component<any, any> {
           }, []).join(', '),
         };
         this.setState(newState);
-      })
+      });
     });
   }
 

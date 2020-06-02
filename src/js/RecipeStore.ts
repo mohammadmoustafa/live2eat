@@ -1,11 +1,10 @@
 import PouchDB from 'pouchdb-browser';
 
 class RecipeStore {
-
   db: PouchDB.Database<{}>;
 
   constructor(memory?: boolean) {
-    if(memory) {
+    if (memory) {
       PouchDB.plugin(require('pouchdb-adapter-memory'));
       this.db = new PouchDB('recipes', {adapter: 'memory'});
     } else {
@@ -24,7 +23,7 @@ class RecipeStore {
   getRecipe(id: string) {
     return this.db.get(id, {
       attachments: true,
-      binary: true
+      binary: true,
     });
   }
 
@@ -32,7 +31,7 @@ class RecipeStore {
     return this.db.allDocs({
       include_docs: true,
       attachments: true,
-      binary: true
+      binary: true,
     });
   }
 
@@ -45,4 +44,4 @@ class RecipeStore {
   }
 }
 
-export { RecipeStore };
+export {RecipeStore};
