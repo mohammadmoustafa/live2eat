@@ -1,14 +1,22 @@
 const Application = require('spectron').Application
 const assert = require('assert')
 const electronPath = require('electron') // Require Electron from the binaries included in node_modules.
-const path = require('path')
-const PouchDB = require('pouchdb-browser');
-global.fetch = require('node-fetch');
+const path = require('path');
+// const {RecipeStore} = require('../build/js/RecipeStore');
 
 describe('Recipes page', function() {
 
   before(async function() {
     this.timeout(25000);
+
+    if (!globalThis.fetch) {
+      globalThis.fetch = require('node-fetch');
+      globalThis.Headers = fetch.Headers;
+    }
+
+    const {RecipeStore} = require('../build/js/RecipeStore');
+    this.db = new RecipeStore(true);
+
     this.app = new Application({
       path: electronPath,
       args: [path.join(__dirname, '..')]
@@ -36,4 +44,5 @@ describe('Recipes page', function() {
         assert.equal(numWindows, 2);
       });
   });
+
 });

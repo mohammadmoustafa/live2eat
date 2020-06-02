@@ -1,14 +1,14 @@
 import React from 'react';
-import PouchDB from 'pouchdb-browser';
+import {RecipeStore} from '../js/RecipeStore';
 import ReactMarkdown from 'react-markdown';
 
 export default class Recipe extends React.Component<any, any> {
   _id: any;
-  db: any;
+  db: RecipeStore;
 
   constructor(props: any) {
     super(props);
-    this.db = new PouchDB('recipes');
+    this.db = new RecipeStore();
     this._id = this.props.match.params.id;
     this.state = {
       recipe: null,
@@ -17,10 +17,7 @@ export default class Recipe extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    this.db.get(this._id, {
-      attachments: true,
-      binary: true,
-    }).then((doc: any) => {
+    this.db.getRecipe(this._id).then((doc: any) => {
       this.setState({recipe: doc});
     }).catch(console.log);
   }

@@ -37,7 +37,7 @@ gulp.task('vendors', () => {
 });
 
 gulp.task('ts', () => {
-  return gulp.src(['main.ts'])
+  return gulp.src(['main.ts', 'global.d.ts'])
     .pipe(babel())
     .pipe(gulp.dest('build/'))
     .pipe(connect.reload());
@@ -73,7 +73,7 @@ gulp.task('watch', (callback) => {
   gulp.watch('src/html/*.html', gulp.series('html'));
   gulp.watch('src/css/**/*.css', gulp.series('css'));
   gulp.watch('main.ts', gulp.series('ts'));
-  gulp.watch('src/js/**/*.js', gulp.series('js'));
+  gulp.watch(['src/js/**/*.js', 'src/js/**/*.ts'], gulp.series('js'));
   gulp.watch('src/components/*.tsx', gulp.series('tsx'));
   gulp.watch('src/assets/**/*', gulp.series('images'));
   callback();

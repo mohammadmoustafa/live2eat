@@ -6,8 +6,8 @@ import {BsCardImage} from 'react-icons/bs';
 import FlakeIdGen from 'flake-idgen';
 const intformat = require('biguint-format');
 import DATA from '../assets/data.json';
-import PouchDB from 'pouchdb-browser';
 import Mousetrap from 'mousetrap';
+import {RecipeStore} from '../js/RecipeStore';
 
 const generator = new FlakeIdGen();
 
@@ -34,7 +34,7 @@ export default class ModalForm extends React.Component<any, any> {
       update: false,
     };
     this.fileRef = React.createRef();
-    this.store = new PouchDB('recipes');
+    this.store = new RecipeStore();
     this.exit = this.exit.bind(this);
     this.submit = this.submit.bind(this);
     this.parseDuration = this.parseDuration.bind(this);
@@ -43,29 +43,29 @@ export default class ModalForm extends React.Component<any, any> {
 
   componentDidMount() {
     Mousetrap.bind('esc', this.exit, 'keyup');
-    ipcRenderer.on('recipe-edit', (e: any, doc: any) => {
-      const newState: object = {
-        _id: doc._id,
-        _rev: doc._rev,
-        title: doc.title,
-        serves: doc.serves,
-        prepTime: doc.prepTime,
-        cookTime: doc.cookTime,
-        directions: doc.directions,
-        dirTextVal: doc.directions.join(', '),
-        ingredients: doc.ingredients,
-        category: doc.category,
-        notes: doc.notes,
-        update: true,
-        ingrTextVal: doc.ingredients.reduce((acc: any, curr: any) => {
-          acc.push(`${curr.quantity}${curr.unit} ${curr.label}`);
-          return acc;
-        }, []).join(', '),
-      };
-      this.store.getAttachment(doc._id, 'img').then((res: any) => {
-        newState.img = res;
+    ipcRenderer.on('recipe-edit', (e: any, id: any) => {
+      this.store.getRecipe(id).then((doc: any) => {
+        const newState: object = {
+          _id: doc._id,
+          _rev: doc._rev,
+          title: doc.title,
+          img: doc._attachments.img.data,
+          serves: doc.serves,
+          prepTime: doc.prepTime,
+          cookTime: doc.cookTime,
+          directions: doc.directions,
+          dirTextVal: doc.directions.join(', '),
+          ingredients: doc.ingredients,
+          category: doc.category,
+          notes: doc.notes,
+          update: true,
+          ingrTextVal: doc.ingredients.reduce((acc: any, curr: any) => {
+            acc.push(`${curr.quantity}${curr.unit} ${curr.label}`);
+            return acc;
+          }, []).join(', '),
+        };
         this.setState(newState);
-      }).catch(console.log);
+      })
     });
   }
 
@@ -101,7 +101,7 @@ export default class ModalForm extends React.Component<any, any> {
   }
 
   submit() {
-    const recipe: any = {
+    const recipe: Recipe = {
       _id: this.state._id,
       _attachments: {
         'img': {
@@ -122,7 +122,8 @@ export default class ModalForm extends React.Component<any, any> {
     if (this.state.update) {
       recipe._rev = this.state._rev;
     }
-    this.store.put(recipe).then(() => {
+
+    this.store.addRecipe(recipe).then((doc: any) => {
       ipcRenderer.send('db-refresh-request');
       this.exit();
     }).catch(console.log);
